@@ -5,7 +5,7 @@
 
 #### 开发初衷
 
-作为一个前端开发人员，开发的时候可能会遇到基于不同技术盏的项目，这种项目能共用的插件非常少。心里总想着如果能编写出兼容多种不同类型项目的插件，效率能提高不少，基于这种原因，我在业余时间开始编写了这么一个插件。
+作为一个前端开发人员，开发的时候可能会遇到基于不同技术盏的项目，这种项目能共用的插件非常少，比如老旧的js插件用到vue项目可能会出现不兼容热重载的问题，又比如组件只兼容web端，在移动端黎表现力差这种问题，为了解决这些问题，我试着开发能兼容多种项目、多种客户端的插件。
 
 ## Browser compatibility
 
@@ -227,17 +227,17 @@ IE最低兼容到IE9，兼容各种主流浏览器
 #### ScrollerEv可读属性
 | 属性 | 描述 |
 |-----|-----|
-| width | 等同于元素的offsetWidth，box的内容区域width+左右padding+左右border |
-| height | 等同于元素的offsetHeight，box的内容区域height+上下padding+上下border |
-| offsetTop | 获取当前元素到定位父节点的top方向的距离 |
-| offsetLeft | 获取当前元素到定位父节点的left方向的距离 |
-| scrollWidth | box可滚动的垂直高度 |
-| scrollHeight | box可滚动的水平宽度 |
-| scrollTop | 垂直方向滚动距离 |
-| scrollLeft | 水平方向滚动距离 |
-| clientWidth | box的内容区域width+左右padding（可视区域width的大小） |
-| clientHeight | box的内容区域height+上下padding（可视区域height的大小） |
-| clientTop | 盒子上边框 |
-| clientLeft | 盒子左边框 |
-| target | 触发滚动元素的html对象 |
+| width | 滚动容器的内容区域width+左右padding+左右border |
+| height | 滚动容器的内容区域height+上下padding+上下border |
+| offsetTop | 滚动容器到定位父节点的top方向的距离 |
+| offsetLeft | 滚动容器到定位父节点的left方向的距离 |
+| scrollWidth | 滚动容器可滚动的垂直高度 |
+| scrollHeight | 滚动容器可滚动的水平宽度 |
+| scrollTop | 滚动容器垂直方向滚动距离 |
+| scrollLeft | 滚动容器水平方向滚动距离 |
+| clientWidth | 滚动容器的内容区域width+左右padding（可视区域width的大小） |
+| clientHeight | 滚动容器的内容区域height+上下padding（可视区域height的大小） |
+| clientTop | 滚动容器上边框 |
+| clientLeft | 滚动容器左边框 |
+| target | 滚动容器html对象 |
 

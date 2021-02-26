@@ -141,30 +141,6 @@ class ScrollerController{
         scroller.scrollerInit(el, opt)
         return scroller
     }
-    /* public onScroll(callback:Function):void{
-        scroller.onScroll(callback)
-    }
-    public onScrollTop(callback:Function):void{
-        scroller.onScrollTop(callback)
-    }
-    public onScrollBottom(callback:Function):void{
-        scroller.onScrollBottom(callback)
-    }
-    public onScrollLeft(callback:Function):void{
-        scroller.onScrollLeft(callback)
-    }
-    public onScrollRight(callback:Function):void{
-        scroller.onScrollRight(callback)
-    }
-    public scrollXTo(value:number, duration:number):void{
-        scroller.scrollXTo(value, duration)
-    }
-    public scrollYTo(value:number, duration:number):void{
-        scroller.scrollYTo(value, duration)
-    }
-    public scrollTo({x,y}:ScrollToJSON, duration:number):void{
-        scroller.scrollTo({x,y}, duration)
-    } */
 }
 
 const vScroller:ScrollerController = new ScrollerController()
