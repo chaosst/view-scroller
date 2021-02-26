@@ -25,7 +25,7 @@
                 }
             })
             var el = document.getElementsByClassName('content2')[0]
-            var num = 2
+            var num = 1
             var $s2 = window.viewScroller.init(el,{
                 alwayShow:true,
                 class:'myscroller',
@@ -60,7 +60,9 @@
                 scrollBar:{
                     size:10,
                     right:4,
-                    minLength:40
+                    minLength:40,
+                    spacing:0,
+                    radius:0
                 }
             })
             $box.scrollTo({x:0, y:1000},500)
@@ -95,7 +97,6 @@
             <div class="title">上拉加载</div>
             <div class="content2">
                 <img src="images/1.jpeg" />
-                <img src="images/2.jpeg" />
             </div>
         </div>
     </div>

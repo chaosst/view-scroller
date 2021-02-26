@@ -34,6 +34,7 @@ export declare interface ScorllBarOptions {
         bottom?: number | string;
         minLength?: number;
         spacing?: number;
+        radius?: number;
     };
     width?: number | string;
     height?: number | string;
@@ -65,6 +66,7 @@ export interface ScorllBarOptionsRequired extends ScorllBarOptions {
         bottom: number | string;
         minLength: number;
         spacing: number;
+        radius: number;
     };
     width?: number | string;
     height?: number | string;

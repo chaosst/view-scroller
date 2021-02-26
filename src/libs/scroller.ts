@@ -307,6 +307,8 @@ export default class ScrollerBar extends Scroller{
         // childs.forEach((item:Node)=>{
         //     cbox.appendChild(item)
         // })
+        /* 判断鼠标是否已进入滚动容器 */
+        let mousein = false
         let div:any = [
             h('div.__view-scroller-box'+this.getScrollClass(),{
                 dataset:{
@@ -319,6 +321,26 @@ export default class ScrollerBar extends Scroller{
                         this.bus.off('scrollBottom')
                         this.bus.off('scrollLeft')
                         this.bus.off('scrollRight')
+                    },
+                    insert:(vnode:any)=>{
+                        const { elm } = vnode
+                        /* 初始化时检测一次右边和底部的滚动事件 */
+                        if(this.selector['scview'].elm.offsetHeight - elm.offsetHeight <= options.limit.bottom){
+                            if(!this.onceEvents.scrollBottom){
+                                this.onceEvents.scrollBottom = 1
+                                this.bus.emit('scrollBottom', this.mainEv)
+                            }
+                        }else{
+                            this.onceEvents.scrollBottom = 0
+                        }
+                        if(this.selector['scview'].elm.offsetWidth - elm.offsetWidth <= options.limit.right){
+                            if(!this.onceEvents.scrollRight){
+                                this.onceEvents.scrollRight = 1
+                                this.bus.emit('scrollRight', this.mainEv)
+                            }
+                        }else{
+                            this.onceEvents.scrollRight = 0
+                        }
                     }
                 },
                 on: {
@@ -400,6 +422,7 @@ export default class ScrollerBar extends Scroller{
                     ref:'schor'
                 },
                 style:{
+                    borderRadius:options.scrollBar.radius+'px',
                     opacity:options.alwayShow?'1':'0',
                     height:this.public.unitFormat(options.scrollBar.size),
                     bottom:this.public.unitFormat(options.scrollBar.bottom)
@@ -429,6 +452,7 @@ export default class ScrollerBar extends Scroller{
                     ref:'scver'
                 },
                 style:{
+                    borderRadius:options.scrollBar.radius+'px',
                     opacity:options.alwayShow?'1':'0',
                     width:this.public.unitFormat(options.scrollBar.size),
                     right:this.public.unitFormat(options.scrollBar.right)
@@ -487,12 +511,21 @@ export default class ScrollerBar extends Scroller{
                         this.selector['schor'].elm.style.opacity = 1
                         this.selector['scver'].elm.style.opacity = 1
                     }
+                    mousein = true
+                },
+                mousemove:(event:any)=>{
+                    if(!options.alwayShow && !mousein){
+                        this.selector['schor'].elm.style.opacity = 1
+                        this.selector['scver'].elm.style.opacity = 1
+                        mousein = true
+                    }
                 },
                 mouseleave:(event:any)=>{
                     if(!options.alwayShow){
                         this.selector['schor'].elm.style.opacity = 0
                         this.selector['scver'].elm.style.opacity = 0
                     }
+                    mousein = false
                 }
             }
         },div)

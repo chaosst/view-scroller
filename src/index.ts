@@ -37,7 +37,8 @@ export declare interface ScorllBarOptions{
         right?:number|string,
         bottom?:number|string,
         minLength?:number,
-        spacing?:number
+        spacing?:number,
+        radius?:number
     },
     width?:number|string,
     height?:number|string;
@@ -69,7 +70,8 @@ export interface ScorllBarOptionsRequired extends ScorllBarOptions{
         right:number|string,
         bottom:number|string,
         minLength:number,
-        spacing:number
+        spacing:number,
+        radius:number
     },
     width?:number|string,
     height?:number|string
@@ -109,7 +111,8 @@ class ScrollerController{
             right:4,
             bottom:4,
             minLength:mPublic.SCROLL_MINLENGTH,
-            spacing:14
+            spacing:14,
+            radius:4
         },
         width:undefined,
         height:undefined
