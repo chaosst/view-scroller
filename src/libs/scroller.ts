@@ -7,7 +7,7 @@ import { propsModule } from 'snabbdom/build/package/modules/props'
 import { styleModule } from 'snabbdom/build/package/modules/style'
 import { eventListenersModule } from 'snabbdom/build/package/modules/eventlisteners'
 import { h } from 'snabbdom/build/package/h' // helper function for creating vnodes
-import { toVNode } from 'snabbdom/build/package/toVNode' // helper function for creating vnodes
+import { toVNode } from 'snabbdom/build/package/tovnode' // helper function for creating vnodes
 import { VNode, VNodeData } from 'snabbdom/build/package/vnode'
 import { ScorllBarOptionsRequired, ScrollToJSON } from '../index'
 
