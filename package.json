@@ -43,7 +43,7 @@
     "webpack-dev-server": "^3.2.1"
   },
   "dependencies": {
-    "snabbdom": "^2.1.0"
+    "snabbdom": "2.1.0"
   },
   "repository": {
     "type": "git",
