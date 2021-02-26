@@ -17,6 +17,12 @@
 ## Demo
 暂无
 
+## How to start the example
+拉取github项目到本地后
+```bash
+npm run start
+```
+http://localhost:3000/src/examples/index 查看例子
 
 ## How to use
 
