@@ -15,7 +15,7 @@
 
 
 ## Demo
-暂无
+滚动插件demo：[https://chaosst.gitee.io/view-scroller/src/examples/index](https://chaosst.gitee.io/view-scroller/src/examples/index)
 
 ## How to start the example
 拉取github项目到本地后
