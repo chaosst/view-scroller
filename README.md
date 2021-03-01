@@ -100,7 +100,7 @@ export default{
 ```
 
 ### Browser
-IE最低兼容到IE9，兼容各种主流浏览器
+IE最低兼容到IE10，兼容各种主流浏览器
 
 #### Install
 拉取github项目根目录下dist/index.global.js，dist/index.css到项目中
