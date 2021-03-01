@@ -7,14 +7,42 @@ html,body{
     width:100%;
     height:100%;
 }
-
-.myscroller{
-    margin-left:calc(50% - 500px);
+.page .tabs{
+    box-sizing: border-box;
+    height:48px;
+    line-height: 48px;
+    width:100%;
+    background: #F5F5F5;
+    border-bottom:2px solid #ccc;
+    padding: 0 20px;
+    text-align: center;
+}
+.page .tabs .tab{
+    color: white;
+    width: 100px;
+    height: 30px;
+    line-height: 30px;
+    display: inline-block;
+    text-align: center;
+    background: #1989fa;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.page .tabs .tab:hover{
+    opacity: .8;
+}
+.page .page-content{
+    width:100%;
 }
 
 .page-scroller{
     width:100%;
-    height:100%;
+    height:calc(100% - 50px);
+}
+
+.myscroller{
+    margin-left:calc(50% - 500px);
 }
 
 .main1, .main2{
@@ -22,19 +50,13 @@ html,body{
     height:100%;
 }
 .main1{
-    background: wheat;
+    background: steelblue;
 }
 .main2{
     background: skyblue;
 }
 
-.title{
-    line-height:40px;
-    height:40px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-}
+
 
 .content1, .content2{
     width: 100%;
@@ -42,6 +64,18 @@ html,body{
     background: #fff;
     color:#000;
     height:auto;
+}
+.title{
+    line-height:40px;
+    height:40px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.5);
+    color:white;
+    position: absolute;
+    top:0;left:0;
+    width:100%;
 }
 .content1 img, .content2 img{
     width:100%;
@@ -55,10 +89,10 @@ html,body{
 
 .loading{
     display: none;
-    position: fixed;
+    position: absolute;
     left:0;top:0;
-    width:100vw;
-    height: 100vh;
+    width:100%;
+    height: 100%;
     background: rgba(0, 0, 0, .6);
     z-index: 8000;
 }

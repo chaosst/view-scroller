@@ -1,10 +1,5 @@
 import { Scroller } from './main';
 import { ScorllBarOptionsRequired, ScrollToJSON } from '../index';
-declare global {
-    interface Window {
-        ResizeObserver: any;
-    }
-}
 /**
  * 滚动插件的实现类
  */
@@ -19,6 +14,7 @@ export default class ScrollerBar extends Scroller {
     private selector;
     private initDiv;
     private mainEv;
+    target: HTMLElement | null;
     constructor();
     /**
      * 监听滚动方法

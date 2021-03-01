@@ -6,6 +6,7 @@ declare global {
     }
     interface HTMLElement {
         vScrollTo: Function;
+        scrollTo: Function;
     }
 }
 /**

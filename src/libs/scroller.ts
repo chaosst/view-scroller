@@ -10,12 +10,7 @@ import { h } from 'snabbdom/build/package/h' // helper function for creating vno
 import { toVNode } from 'snabbdom/build/package/tovnode' // helper function for creating vnodes
 import { VNode, VNodeData } from 'snabbdom/build/package/vnode'
 import { ScorllBarOptionsRequired, ScrollToJSON } from '../index'
-
-declare global {
-    interface Window {
-        ResizeObserver: any
-    }
-}
+import ResizeObserver from 'resize-observer-polyfill';
 
 /* 滚动事件接口声明 */
 class ScrollerEv{
@@ -82,6 +77,7 @@ export default class ScrollerBar extends Scroller{
     private initDiv:VNode|undefined;
     /* 滚动事件 */
     private mainEv:ScrollerEv = new ScrollerEv()
+    public target:HTMLElement|null = null
     
     constructor(){
         super()
@@ -157,12 +153,7 @@ export default class ScrollerBar extends Scroller{
     }
 
     public scrollTo({x,y}:ScrollToJSON, duration?:number):void{
-        if(this.selector['scbox'].elm.vScrollTo){
-            this.selector['scbox'].elm.vScrollTo({x,y}, duration)
-        }else{
-            this.selector['scbox'].elm.scrollLeft = x
-            this.selector['scbox'].elm.scrollTop = y
-        }
+        this.selector['scbox'].elm.vScrollTo({x,y}, duration)
     }
 
     /**
@@ -217,11 +208,11 @@ export default class ScrollerBar extends Scroller{
         let div = this.createVnode(el, options)
         //把虚拟dom转换成真实dom更新到页面
         this.initDiv = div
-
         
         this.patch(box, div)
-        if(typeof window.ResizeObserver != 'undefined'){
-            const myObserver = new window.ResizeObserver((entries:any[]) => {
+        this.target = div.elm
+        if(typeof ResizeObserver != 'undefined'){
+            const myObserver = new ResizeObserver((entries:any[]) => {
                 entries.forEach((entry:any)=> {
                     // console.log('大小位置', entry.contentRect)
                     // console.log('监听的DOM', entry.target)
@@ -229,9 +220,13 @@ export default class ScrollerBar extends Scroller{
                 })
             })
             myObserver.observe(div.elm)
+            myObserver.observe(this.selector['scview'].elm)
         }else{
             if(typeof div.elm.attachEvent != 'undefined'){
                 div.elm.attachEvent('onresize', ()=>{
+                    this.update()
+                })
+                this.selector['scview'].elm.attachEvent('onresize', ()=>{
                     this.update()
                 })
             }else{

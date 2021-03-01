@@ -8,7 +8,8 @@ declare global {
         viewScroller: object
     }
     interface HTMLElement {
-        vScrollTo: Function
+        vScrollTo: Function,
+        scrollTo:Function
     }
 }
 
@@ -94,9 +95,9 @@ class ScrollerController{
         /* 滚动条到顶部、底部、最左，最右时回调scrollLimit事件的距离值 */
         limit:{
             top:10,
-            bottom:100,
+            bottom:60,
             left:10,
-            right:100
+            right:60
         },
         /**
          * 滚动条设置
@@ -111,7 +112,7 @@ class ScrollerController{
             right:4,
             bottom:4,
             minLength:mPublic.SCROLL_MINLENGTH,
-            spacing:14,
+            spacing:0,
             radius:4
         },
         width:undefined,

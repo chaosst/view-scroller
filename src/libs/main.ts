@@ -4,30 +4,46 @@ import { ScrollToJSON } from '../index'
 const SCROLLTO_SPEED = 10
 
 HTMLElement.prototype.vScrollTo = function({x=0,y=0}:ScrollToJSON, duration:number = 300):void{
-    if(typeof this.scrollTo !== 'function'){
-        this.scrollTop = x
-        this.scrollLeft = y
-        console.warn('浏览器不支持view-scroller的滚动动画。')
-    }else{
+    // if(typeof this.scrollTo !== 'function'){
+    //     this.scrollTop = y
+    //     this.scrollLeft = x
+    //     console.warn('浏览器不支持view-scroller的滚动动画。')
+    // }else{
         let t:number = duration
         if(t==0){
-            this.scrollTo(x, y)
+            // this.scrollTo(x, y)
+            this.scrollTop = y
+            this.scrollLeft = x
         }else{
-            let xdis:number = x/(t/SCROLLTO_SPEED)
-            let ydis:number = y/(t/SCROLLTO_SPEED)
-            let vx:number = 0, vy:number = 0;
-            if(x>0 || y>0){
+            let vx:number = this.scrollLeft, vy:number = this.scrollTop;
+            let xdis:number = (x-vx)/(t/SCROLLTO_SPEED)
+            let ydis:number = (y-vy)/(t/SCROLLTO_SPEED)
+            if((x>=0 && y>=0) && (xdis!==0 || ydis!==0)){
                 let ev:any = setInterval(()=>{
                     vx = vx + xdis
                     vy = vy + ydis
-                    this.scrollTo(vx, vy)
-                    if((x>0 && vx >= x) || (y>0 && vy >= y)){
+                    // this.scrollTo(vx, vy)
+                    this.scrollTop = vy
+                    this.scrollLeft = vx
+                    console.log(y-vy, ydis)
+                    if(Math.abs(x-vx) < Math.abs(xdis) || Math.abs(y-vy) < Math.abs(ydis)){
+                        this.scrollTop = y
+                        this.scrollLeft = x
                         clearInterval(ev)
                     }
+                    // if((x>=0 && vx.toFixed(0) == x.toFixed(0)) && (y>=0 && vy.toFixed(0) == y.toFixed(0))){
+                    //     clearInterval(ev)
+                    // }
                 },SCROLLTO_SPEED)
+                // setTimeout(()=>{
+                //     // this.scrollTo(x, y)
+                //     this.scrollTop = y
+                //     this.scrollLeft = x
+                //     clearInterval(ev)
+                // },t)
             }
         }
-    }
+    // }
 }
 
 const userAgent = navigator.userAgent; //取得浏览器的userAgent字符串

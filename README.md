@@ -11,7 +11,7 @@
 
 | browser | IE | Firefox | Chrome | Edge | Opera | safari |
 | ------- | ------- | ------- | ------- | ------- | ------- | ------- |
-| version | 9 | 69 | 64 | 79 | 51 | 13.1 |
+| version | 10 | 69 | 64 | 79 | 51 | 13.1 |
 
 
 ## Demo
@@ -196,7 +196,7 @@ IE最低兼容到IE9，兼容各种主流浏览器
 | right | 垂直方向滚动条离容器最右方的距离，单位px | 否 | number | 4 |
 | bottom | 水平方向滚动条离容器最底部的距离，单位px | 否 | number | 4 |
 | minLength | 当容器滚动内容足够多的时候，可以设置滚动条最小的长度来避免滚动条会无限接近一个点 | 否 | number | 20 |
-| spacing | 滚动容器预留垂直方向或水平方向滚动条的间距空间，可设置为0，但为0时嵌套滚动插件时的滚动条有可能出现多层重合，单位像素 | 否 | number | 14 |
+| spacing | 滚动容器预留垂直方向或水平方向滚动条的间距空间，默认0，为0时嵌套滚动插件时的滚动条有可能出现多层重合，可以设置大于0的距离来解决这个问题，单位像素 | 否 | number | 0 |
 
 #### on 属性:
 
@@ -211,11 +211,11 @@ IE最低兼容到IE9，兼容各种主流浏览器
 ### viewScroller init()初始化后的实例方法:
 
 - `scrollXTo(value:number, duration?:number)` 
-- 容器水平方向滚到到左边距离为value的位置，duration非必填，为滚动动画时间（单位：毫秒，IE下的动画会失效）
+- 容器水平方向滚到到左边距离为value的位置，duration非必填，为滚动动画时间（单位：毫秒）
 - `scrollYTo(value:number, duration?:number)` 
-- 容器垂直方向滚到到左边距离为value的位置，duration非必填，为滚动动画时间（单位：毫秒，IE下的动画会失效）
+- 容器垂直方向滚到到左边距离为value的位置，duration非必填，为滚动动画时间（单位：毫秒）
 - `scrollTo({x,y}:ScrollToJSON, duration?:number)` 
-- 容器水平方向滚到到左边距离为x,垂直方向滚到到左边距离为y的位置，duration非必填，为滚动动画时间（单位：毫秒，IE下的动画会失效）
+- 容器水平方向滚到到左边距离为x,垂直方向滚到到左边距离为y的位置，duration非必填，为滚动动画时间（单位：毫秒）
 
 ### viewScroller init()初始化后的事件:
 
