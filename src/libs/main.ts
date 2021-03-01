@@ -25,7 +25,6 @@ HTMLElement.prototype.vScrollTo = function({x=0,y=0}:ScrollToJSON, duration:numb
                     // this.scrollTo(vx, vy)
                     this.scrollTop = vy
                     this.scrollLeft = vx
-                    console.log(y-vy, ydis)
                     if(Math.abs(x-vx) < Math.abs(xdis) || Math.abs(y-vy) < Math.abs(ydis)){
                         this.scrollTop = y
                         this.scrollLeft = x
