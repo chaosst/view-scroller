@@ -45,6 +45,18 @@ HTMLElement.prototype.vScrollTo = function({x=0,y=0}:ScrollToJSON, duration:numb
     // }
 }
 
+HTMLElement.prototype.closest = function (selector:string) {
+    var el:any = this;
+    var matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
+    while (el) {
+      if (matchesSelector.call(el, selector)) {
+        break;
+      }
+      el = el.parentElement;
+    }
+    return el;
+}
+
 const userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
 const ie11Rgx = /(trident)\/([\d.]+)/;
 
@@ -53,15 +65,15 @@ const ie11Rgx = /(trident)\/([\d.]+)/;
  */
 class Public{
     /* css使用的大小单位 */
-    public CSS_UNIT:string = 'px'
+    // public CSS_UNIT:string = 'px'
     public SCROLL_MINLENGTH:number = 20
-    public unitFormat(value?:number|string):string{
-        let val:string = ''
-        if(typeof value === 'number'){
-            val = value + this.CSS_UNIT
-        }
-        return typeof val === 'string'?val:''
-    }
+    // public unitFormat(value?:number|string):string{
+    //     let val:string = ''
+    //     if(typeof value === 'number'){
+    //         val = value + this.CSS_UNIT
+    //     }
+    //     return typeof val === 'string'?val:''
+    // }
     public themeSet(theme:string):string{
         if(theme != 'dark'){
             return ` __view-theme-`+theme
@@ -92,6 +104,22 @@ class Public{
         }else{
             return ''
         }
+    }
+
+    public EVENTS:any = {
+        mouseup:'mouseup',
+        mousedown:'mousedown',
+        mousemove:'mousemove',
+        mouseenter:'mouseenter',
+        mouseleave:'mouseleave'
+    }
+
+    public MOBILE_EVENTS:any = {
+        mouseup:'touchend',
+        mousedown:'touchstart',
+        mousemove:'touchmove',
+        mouseenter:'touchstart',
+        mouseleave:'touchend'
     }
 }
 

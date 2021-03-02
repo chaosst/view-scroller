@@ -54,6 +54,15 @@ export default class ScrollerBar extends Scroller{
         scrollBottom:0,
         scrollRight:0
     }
+    /**
+     * 标识用户是否使用了事件监听
+     */
+    private hasEvent:any = {
+        scrollTop:0,
+        scrollLeft:0,
+        scrollBottom:0,
+        scrollRight:0
+    }
     private startPos:any = {
         X:0,
         Y:0,
@@ -64,6 +73,8 @@ export default class ScrollerBar extends Scroller{
     private options:any = {}
 
     private isDraging:any = false
+
+    private isScrolling:boolean = false
 
     private mouseupEv:any = null
     private mousemoveEv:any = null
@@ -104,6 +115,9 @@ export default class ScrollerBar extends Scroller{
             myModule //自定义模块
         ])
     }
+    private getEvent(name:string){
+        return this.options.mobile?this.public.MOBILE_EVENTS[name]:this.public.EVENTS[name]
+    }
     /**
      * 监听滚动方法
      * @param callback 滚动回调
@@ -117,6 +131,9 @@ export default class ScrollerBar extends Scroller{
      * @param callback 回调
      */
     public onScrollBottom(callback:Function):void{
+        /* 该滚动触发事件不能叠加 */
+        this.bus.off('scrollBottom')
+        this.hasEvent.scrollBottom = 1
         this.bus.on('scrollBottom', callback)
     }
 
@@ -125,6 +142,9 @@ export default class ScrollerBar extends Scroller{
      * @param callback 回调
      */
     public onScrollTop(callback:Function):void{
+        /* 该滚动触发事件不能叠加 */
+        this.bus.off('scrollTop')
+        this.hasEvent.scrollTop = 1
         this.bus.on('scrollTop', callback)
     }
 
@@ -133,6 +153,9 @@ export default class ScrollerBar extends Scroller{
      * @param callback 回调
      */
     public onScrollLeft(callback:Function):void{
+        /* 该滚动触发事件不能叠加 */
+        this.bus.off('scrollLeft')
+        this.hasEvent.scrollLeft = 1
         this.bus.on('scrollLeft', callback)
     }
 
@@ -141,6 +164,9 @@ export default class ScrollerBar extends Scroller{
      * @param callback 回调
      */
     public onScrollRight(callback:Function):void{
+        /* 该滚动触发事件不能叠加 */
+        this.bus.off('scrollRight')
+        this.hasEvent.scrollRight = 1
         this.bus.on('scrollRight', callback)
     }
 
@@ -160,16 +186,18 @@ export default class ScrollerBar extends Scroller{
      * 初始化滚动条拖动的全局事件
      */
     private dragInit(){
-        document.addEventListener('mouseup',this.mouseupEv = (event:any)=>{
+        document.addEventListener(this.getEvent('mouseup'),this.mouseupEv = (event:any)=>{
             this.isDraging = false
         })
-        document.addEventListener('mousemove',this.mousemoveEv = (event:any)=>{
+        document.addEventListener(this.getEvent('mousemove'),this.mousemoveEv = (event:any)=>{
             const scBox:any = this.selector['scbox']
             const scView:any = this.selector['scview']
-            let { pageY, pageX }:any = event
+            let { pageY, pageX }:any = this.options.mobile?event.targetTouches[0]:event
             if(this.isDraging){
                 this.selector['scver'].elm.style.opacity = 1
                 this.selector['schor'].elm.style.opacity = 1
+                this.selector['schor'].elm.style.visibility = 'visible'
+                this.selector['scver'].elm.style.visibility = 'visible'
                 let disY:number = this.startPos.Y - pageY
                 scBox.elm.scrollTop = this.startPos.scrollTop - disY/scBox.elm.offsetHeight*scView.elm.offsetHeight
                 let disX:number = this.startPos.X - pageX
@@ -235,11 +263,24 @@ export default class ScrollerBar extends Scroller{
         }
     }
 
+    private getNested(el:HTMLElement){
+        let n:number = 0
+        for(let $el:any = el; $el && $el.closest('.__view-scroller')?true:false; $el = $el.closest('.__view-scroller').parentNode){
+            n++
+        }
+        return n
+    }
+
     private thumbResizeHor = (vnode:any)=>{
+        let zIndex = 6000
+        vnode.elm.parentNode.style.zIndex = zIndex + this.getNested(vnode.elm.parentNode)
         let max:number = this.selector['scbox'].elm.offsetWidth
         let scale:number = max/this.selector['scview'].elm.offsetWidth
         if(scale<1){
-            const minLength:number = this.options.scrollBar.minLength
+            let minLength:number = this.options.scrollBar.minLength
+            if(minLength>=max || minLength<this.public.SCROLL_MINLENGTH){
+                minLength = this.public.SCROLL_MINLENGTH
+            }
             vnode.elm.style.minWidth = minLength + 'px'
             vnode.elm.style.width = scale*100 +'%'; 
             if(max*scale < minLength){
@@ -252,12 +293,14 @@ export default class ScrollerBar extends Scroller{
                     vnode.elm.style.transform = `translateY(${newValue/(scale*vm.selector['scview'].elm.offsetWidth)*100}%)`
                 }
             })
-            this.selector['scview'].elm.style['padding-bottom'] = this.options.scrollBar.spacing+'px'
+            this.selector['scview'].elm.style['padding-bottom'] = this.public.getRealPx(this.options.scrollBar.spacing)
         }else{
             this.selector['scview'].elm.style['padding-bottom'] = '0px'
         }
     }
     private thumbResizeVer = (vnode:any)=>{
+        let zIndex = 6000
+        vnode.elm.parentNode.style.zIndex = zIndex + this.getNested(vnode.elm.parentNode)
         let max:number = this.selector['scbox'].elm.offsetHeight
         let scale:number = max/this.selector['scview'].elm.offsetHeight
         if(scale<1){
@@ -277,7 +320,7 @@ export default class ScrollerBar extends Scroller{
                     vnode.elm.style.transform = `translateY(${newValue/(scale*vm.selector['scview'].elm.offsetHeight)*100}%)`
                 }
             })
-            this.selector['scview'].elm.style['padding-right'] = this.options.scrollBar.spacing+'px'
+            this.selector['scview'].elm.style['padding-right'] = this.public.getRealPx(this.options.scrollBar.spacing)
         }else{
             this.selector['scview'].elm.style['padding-right'] = '0px'
         }
@@ -304,6 +347,7 @@ export default class ScrollerBar extends Scroller{
         // })
         /* 判断鼠标是否已进入滚动容器 */
         let mousein = false
+        let scrollTimer:any = null
         let div:any = [
             h('div.__view-scroller-box'+this.getScrollClass(),{
                 dataset:{
@@ -319,27 +363,34 @@ export default class ScrollerBar extends Scroller{
                     },
                     insert:(vnode:any)=>{
                         const { elm } = vnode
+                        let prevOffsetHeight:number = -1, prevOffsetWidth:number = -1
+                        const checkRightBottom = ()=>{
+                            const disY = this.selector['scview'].elm.offsetHeight - elm.offsetHeight
+                            if(disY <= options.limit.bottom && disY != prevOffsetHeight){
+                                if(!this.onceEvents.scrollBottom){
+                                    prevOffsetHeight = disY
+                                    this.bus.emit('scrollBottom', {...this.mainEv, done:checkRightBottom})
+                                }
+                            }else{
+                                this.onceEvents.scrollBottom = 0
+                            }
+                            const disX = this.selector['scview'].elm.offsetWidth - elm.offsetWidth
+                            if(disX <= options.limit.right && disX != prevOffsetWidth){
+                                if(!this.onceEvents.scrollRight){
+                                    prevOffsetWidth = disX
+                                    this.bus.emit('scrollRight', {...this.mainEv, done:checkRightBottom})
+                                }
+                            }else{
+                                this.onceEvents.scrollRight = 0
+                            }
+                        }
                         /* 初始化时检测一次右边和底部的滚动事件 */
-                        if(this.selector['scview'].elm.offsetHeight - elm.offsetHeight <= options.limit.bottom){
-                            if(!this.onceEvents.scrollBottom){
-                                this.onceEvents.scrollBottom = 1
-                                this.bus.emit('scrollBottom', this.mainEv)
-                            }
-                        }else{
-                            this.onceEvents.scrollBottom = 0
-                        }
-                        if(this.selector['scview'].elm.offsetWidth - elm.offsetWidth <= options.limit.right){
-                            if(!this.onceEvents.scrollRight){
-                                this.onceEvents.scrollRight = 1
-                                this.bus.emit('scrollRight', this.mainEv)
-                            }
-                        }else{
-                            this.onceEvents.scrollRight = 0
-                        }
+                        checkRightBottom()
                     }
                 },
                 on: {
                     scroll: ({target}:any) => {
+                        clearTimeout(scrollTimer)
                         let {offsetHeight, offsetWidth, offsetTop, offsetLeft, clientHeight, clientWidth, clientLeft, clientTop, scrollWidth, scrollHeight, scrollTop, scrollLeft } = target
                         this.mainEv.height = offsetHeight
                         this.mainEv.width = offsetWidth
@@ -355,37 +406,49 @@ export default class ScrollerBar extends Scroller{
                         this.mainEv.scrollLeft = scrollLeft
                         this.mainEv.target = target
                         this.bus.emit('scroll', this.mainEv)
-                        if(this.selector['scview'].elm.offsetHeight - (scrollTop + this.selector['scbox'].elm.offsetHeight) <= options.limit.bottom){
+                        if(this.selector['scview'].elm.offsetHeight - (scrollTop + this.selector['scbox'].elm.offsetHeight) <= options.limit.bottom && this.hasEvent.scrollBottom){
                             if(!this.onceEvents.scrollBottom){
                                 this.onceEvents.scrollBottom = 1
-                                this.bus.emit('scrollBottom', this.mainEv)
+                                this.bus.emit('scrollBottom', {...this.mainEv, done:()=>{this.onceEvents.scrollBottom = 0}})
                             }
-                        }else{
-                            this.onceEvents.scrollBottom = 0
                         }
-                        if(scrollTop <= options.limit.top){
+                        if(scrollTop <= options.limit.top && this.hasEvent.scrollTop){
                             if(!this.onceEvents.scrollTop){
                                 this.onceEvents.scrollTop = 1
-                                this.bus.emit('scrollTop', this.mainEv)
+                                this.bus.emit('scrollTop', {...this.mainEv, done:()=>{this.onceEvents.scrollTop = 0}})
                             }
-                        }else{
-                            this.onceEvents.scrollTop = 0
                         }
-                        if(this.selector['scview'].elm.offsetWidth - (scrollLeft + this.selector['scbox'].elm.offsetWidth) <= options.limit.right){
+                        if(this.selector['scview'].elm.offsetWidth - (scrollLeft + this.selector['scbox'].elm.offsetWidth) <= options.limit.right && this.hasEvent.scrollRight){
                             if(!this.onceEvents.scrollRight){
                                 this.onceEvents.scrollRight = 1
-                                this.bus.emit('scrollRight', this.mainEv)
+                                this.bus.emit('scrollRight', {...this.mainEv, done:()=>{}})
                             }
                         }else{
                             this.onceEvents.scrollRight = 0
                         }
-                        if(scrollLeft <= options.limit.left){
+                        if(scrollLeft <= options.limit.left && this.hasEvent.scrollLeft){
                             if(!this.onceEvents.scrollLeft){
                                 this.onceEvents.scrollLeft = 1
-                                this.bus.emit('scrollLeft', this.mainEv)
+                                this.bus.emit('scrollLeft', {...this.mainEv, done:()=>{}})
                             }
                         }else{
                             this.onceEvents.scrollLeft = 0
+                        }
+                        if(!options.alwayShow && options.mobile){
+                            this.selector['schor'].elm.style.opacity = 1
+                            this.selector['scver'].elm.style.opacity = 1
+                            this.selector['schor'].elm.style.visibility = 'visible'
+                            this.selector['scver'].elm.style.visibility = 'visible'
+                            /* 滚动完成后2秒隐藏滚动条 */
+                            scrollTimer = setTimeout(()=>{
+                                this.selector['schor'].elm.style.opacity = 0
+                                this.selector['scver'].elm.style.opacity = 0
+                                /* 淡出动画时间 */
+                                setTimeout(()=>{
+                                    this.selector['schor'].elm.style.visibility = 'hidden'
+                                    this.selector['scver'].elm.style.visibility = 'hidden'
+                                },300)
+                            },2000)
                         }
                     },
                 }
@@ -417,14 +480,15 @@ export default class ScrollerBar extends Scroller{
                     ref:'schor'
                 },
                 style:{
-                    borderRadius:options.scrollBar.radius+'px',
+                    borderRadius:this.public.getRealPx(options.scrollBar.radius),
                     opacity:options.alwayShow?'1':'0',
-                    height:this.public.unitFormat(options.scrollBar.size),
-                    bottom:this.public.unitFormat(options.scrollBar.bottom)
+                    visibility:options.alwayShow?'visible':'hidden',
+                    height:this.public.getRealPx(options.scrollBar.size),
+                    bottom:this.public.getRealPx(options.scrollBar.bottom)
                 },
             },h('div.__view-scroller-thumb'+this.public.themeSet(options.theme),{
                     on:{
-                        mousedown:(event:any)=>{
+                        [this.getEvent('mousedown')]:(event:any)=>{
                             event.preventDefault()
                             let { pageX, target }:any = event
                             this.startPos.X = pageX
@@ -436,8 +500,8 @@ export default class ScrollerBar extends Scroller{
                         insert: this.thumbResizeHor,
                         update: this.thumbResizeHor,
                         destroy:(vnode:any) => {
-                            document.removeEventListener('mouseup', this.mouseupEv)
-                            document.removeEventListener('mousemove', this.mousemoveEv)
+                            document.removeEventListener(this.getEvent('mouseup'), this.mouseupEv)
+                            document.removeEventListener(this.getEvent('mousemove'), this.mousemoveEv)
                         }
                     }
                 })
@@ -447,16 +511,18 @@ export default class ScrollerBar extends Scroller{
                     ref:'scver'
                 },
                 style:{
-                    borderRadius:options.scrollBar.radius+'px',
+                    borderRadius:this.public.getRealPx(options.scrollBar.radius),
                     opacity:options.alwayShow?'1':'0',
-                    width:this.public.unitFormat(options.scrollBar.size),
-                    right:this.public.unitFormat(options.scrollBar.right)
+                    visibility:options.alwayShow?'visible':'hidden',
+                    width:this.public.getRealPx(options.scrollBar.size),
+                    right:this.public.getRealPx(options.scrollBar.right)
                 },
             },h('div.__view-scroller-thumb'+this.public.themeSet(options.theme),{
                     on:{
-                        mousedown:(event:any)=>{
+                        [this.getEvent('mousedown')]:(event:any)=>{
                             event.preventDefault()
-                            let { pageY, target }:any = event
+                            let { pageY } = this.options.mobile?event.targetTouches[0]:event
+                            let { target }:any = event
                             this.startPos.Y = pageY
                             this.startPos.scrollTop = this.selector['scbox'].elm.scrollTop
                             this.isDraging = target
@@ -466,8 +532,8 @@ export default class ScrollerBar extends Scroller{
                         insert: this.thumbResizeVer,
                         update: this.thumbResizeVer,
                         destroy:(vnode:any) => {
-                            document.removeEventListener('mouseup', this.mouseupEv)
-                            document.removeEventListener('mousemove', this.mousemoveEv)
+                            document.removeEventListener(this.getEvent('mouseup'), this.mouseupEv)
+                            document.removeEventListener(this.getEvent('mousemove'), this.mousemoveEv)
                         }
                     }
                 })
@@ -487,6 +553,41 @@ export default class ScrollerBar extends Scroller{
                 }
             }
         }
+        /**
+         * 如果是移动端，不根据鼠标位置判断滚动条显示，移动端当alwayShow为true时，改成滚动时显示对应容器的滚动条
+         */
+        const on:any = this.options.mobile?{}:{
+            mouseenter:(event:any)=>{
+                if(!options.alwayShow){
+                    this.selector['schor'].elm.style.opacity = 1
+                    this.selector['scver'].elm.style.opacity = 1
+                    this.selector['schor'].elm.style.visibility = 'visible'
+                    this.selector['scver'].elm.style.visibility = 'visible'
+                }
+                mousein = true
+            },
+            mousemove:(event:any)=>{
+                if(!options.alwayShow && !mousein){
+                    this.selector['schor'].elm.style.opacity = 1
+                    this.selector['scver'].elm.style.opacity = 1
+                    this.selector['schor'].elm.style.visibility = 'visible'
+                    this.selector['scver'].elm.style.visibility = 'visible'
+                    mousein = true
+                }
+            },
+            mouseleave:(event:any)=>{
+                if(!options.alwayShow){
+                    this.selector['schor'].elm.style.opacity = 0
+                    this.selector['scver'].elm.style.opacity = 0
+                    /* 淡出动画时间 */
+                    setTimeout(()=>{
+                        this.selector['schor'].elm.style.visibility = 'hidden'
+                        this.selector['scver'].elm.style.visibility = 'hidden'
+                    },300)
+                }
+                mousein = false
+            }
+        }
         div = h('div.__view-scroller'+className,{
             style:{
                 width:this.public.getRealPx(this.options.width),
@@ -500,29 +601,7 @@ export default class ScrollerBar extends Scroller{
             //     ref:'scdiv'
             // },
             // dataset:attrs,
-            on:{
-                mouseenter:(event:any)=>{
-                    if(!options.alwayShow){
-                        this.selector['schor'].elm.style.opacity = 1
-                        this.selector['scver'].elm.style.opacity = 1
-                    }
-                    mousein = true
-                },
-                mousemove:(event:any)=>{
-                    if(!options.alwayShow && !mousein){
-                        this.selector['schor'].elm.style.opacity = 1
-                        this.selector['scver'].elm.style.opacity = 1
-                        mousein = true
-                    }
-                },
-                mouseleave:(event:any)=>{
-                    if(!options.alwayShow){
-                        this.selector['schor'].elm.style.opacity = 0
-                        this.selector['scver'].elm.style.opacity = 0
-                    }
-                    mousein = false
-                }
-            }
+            on
         },div)
         return div
     }

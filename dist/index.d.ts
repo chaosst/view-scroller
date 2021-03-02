@@ -14,6 +14,7 @@ declare global {
  */
 export declare interface ScorllBarOptions {
     alwayShow?: boolean;
+    mobile?: boolean;
     on?: {
         scroll?: Function;
         scrollTop?: Function;
@@ -34,8 +35,8 @@ export declare interface ScorllBarOptions {
         right?: number | string;
         bottom?: number | string;
         minLength?: number;
-        spacing?: number;
-        radius?: number;
+        spacing?: number | string;
+        radius?: number | string;
     };
     width?: number | string;
     height?: number | string;
@@ -46,6 +47,7 @@ export interface ScrollToJSON {
 }
 export interface ScorllBarOptionsRequired extends ScorllBarOptions {
     alwayShow: boolean;
+    mobile: boolean;
     on: {
         scroll: Function;
         scrollTop: Function;
@@ -66,8 +68,8 @@ export interface ScorllBarOptionsRequired extends ScorllBarOptions {
         right: number | string;
         bottom: number | string;
         minLength: number;
-        spacing: number;
-        radius: number;
+        spacing: number | string;
+        radius: number | string;
     };
     width?: number | string;
     height?: number | string;

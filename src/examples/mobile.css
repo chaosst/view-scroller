@@ -1,0 +1,108 @@
+html,body{
+    padding:0;
+    margin:0;
+    height:100%;
+}
+.page{
+    width:100%;
+    height:100%;
+}
+.page .tabs{
+    box-sizing: border-box;
+    height:48px;
+    line-height: 48px;
+    width:100%;
+    background: #F5F5F5;
+    border-bottom:2px solid #ccc;
+    padding: 0 20px;
+    text-align: center;
+}
+.page .tabs .tab{
+    color: white;
+    width: 100px;
+    height: 30px;
+    line-height: 30px;
+    display: inline-block;
+    text-align: center;
+    background: #1989fa;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.page .tabs .tab:hover{
+    opacity: .8;
+}
+.page .page-content{
+    width:100%;
+}
+
+.page-scroller{
+    width:100%;
+    height:calc(100% - 50px);
+}
+
+.myscroller{
+    
+}
+
+.main1, .main2{
+    width: 100%;
+    height:100%;
+}
+.main1{
+    background: steelblue;
+}
+.main2{
+    background: skyblue;
+}
+
+
+
+.content1, .content2{
+    width: 100%;
+    display: inline-block;
+    background: #fff;
+    color:#000;
+    height:auto;
+}
+.title{
+    line-height:40px;
+    height:40px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.5);
+    color:white;
+    position: absolute;
+    top:0;left:0;
+    width:100%;
+}
+.content1 img, .content2 img{
+    width:100%;
+    height:auto;
+}
+
+@keyframes ro{
+    from{transition:0.5s linear}
+    to{transform:rotate(360deg)}
+}
+
+.loading{
+    display: none;
+    position: absolute;
+    left:0;top:0;
+    width:100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .6);
+    z-index: 8000;
+}
+.loading img{
+    position:absolute;
+    animation-name:ro;
+    animation-duration:2s;
+    animation-iteration-count:infinite; 
+    width:50px;
+    height:50px;
+    left: calc(50% - 25px);
+    top: calc(50% - 25px);
+}

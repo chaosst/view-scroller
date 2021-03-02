@@ -3,9 +3,7 @@ import { EventBus } from './bus';
  * 公共方法集合
  */
 declare class Public {
-    CSS_UNIT: string;
     SCROLL_MINLENGTH: number;
-    unitFormat(value?: number | string): string;
     themeSet(theme: string): string;
     isOpera: boolean;
     isIE: true | RegExpMatchArray | null;
@@ -14,6 +12,8 @@ declare class Public {
     isSafari: boolean;
     isChrome: boolean;
     getRealPx(val?: number | string): string;
+    EVENTS: any;
+    MOBILE_EVENTS: any;
 }
 export declare const mPublic: Public;
 export declare class Scroller {

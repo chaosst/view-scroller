@@ -5,9 +5,14 @@ import { ScorllBarOptionsRequired, ScrollToJSON } from '../index';
  */
 export default class ScrollerBar extends Scroller {
     private onceEvents;
+    /**
+     * 标识用户是否使用了事件监听
+     */
+    private hasEvent;
     private startPos;
     private options;
     private isDraging;
+    private isScrolling;
     private mouseupEv;
     private mousemoveEv;
     private patch;
@@ -16,6 +21,7 @@ export default class ScrollerBar extends Scroller {
     private mainEv;
     target: HTMLElement | null;
     constructor();
+    private getEvent;
     /**
      * 监听滚动方法
      * @param callback 滚动回调
@@ -54,6 +60,7 @@ export default class ScrollerBar extends Scroller {
      * @param options 初始化滚动条的参数
      */
     scrollerInit(el: HTMLElement, options: ScorllBarOptionsRequired): any;
+    private getNested;
     private thumbResizeHor;
     private thumbResizeVer;
     private getScrollClass;

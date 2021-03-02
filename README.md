@@ -85,6 +85,8 @@ export default{
                 scroll:(e)=>{
                 },
                 scrollTop:(e)=>{
+                    console.log('触发顶部事件')
+                    e.done()
                 }
             }
         })
@@ -141,6 +143,8 @@ IE最低兼容到IE10，兼容各种主流浏览器
 					scroll:function(e){
 					},
 					scrollTop:function(e){
+                        console.log('触发顶部事件')
+                        e.done()
 					}
 				}
             })
@@ -170,9 +174,10 @@ IE最低兼容到IE10，兼容各种主流浏览器
 
 | 属性 | 描述 | 是否必填 | 类型 |默认值|
 |-----|-----|-----|-----|-----|
-| width | 滚动插件外层容器的宽度 | 否 | string number | auto |
-| height | 滚动插件外层容器的高度 | 否 | string number | auto |
-| alwayShow | 滚动插件的滚动条是否一直可见，为false时 | 否 | boolean | true |
+| mobile | 滚动插件是否设置为移动端模式，滚动触发事件会变成适配移动端的touch事件，alwayShow为false时的显示规则会变成滚动时出现，滚动完成后2秒消失 | 否 | boolean | false |
+| width | 滚动插件外层容器的宽度，单位px，支持string设置其他单位 | 否 | string number | auto |
+| height | 滚动插件外层容器的高度，单位px，支持string设置其他单位 | 否 | string number | auto |
+| alwayShow | 滚动插件的滚动条是否一直可见 | 否 | boolean | false |
 | class | 滚动插件外层容器的样式类名 | 否 | string |  |
 | theme | 滚动插件的主题设置（dark 深色， light 浅色， dark-reverse 深色反转， light-reverse 浅色反转） | 否 | string | dark |
 | limit | 配合滚动插件的scrollTop，scrollBottom，scrollLeft，scrollRight事件使用 | 否 | object |  |
@@ -183,21 +188,21 @@ IE最低兼容到IE10，兼容各种主流浏览器
 
 | 属性 | 描述 | 是否必填 | 类型 |默认值|
 |-----|-----|-----|-----|-----|
-| top | scrollTop事件触发距离，向顶部滚动时，当离顶部距离小于该值时触发，单位px | 否 | number | 10 |
-| bottom | scrollBottom事件触发距离，向底部滚动时，当离底部距离小于该值时触发，单位px | 否 | number | 60 |
-| left | scrollLeft事件触发距离，向左边滚动时，当离左边距离小于该值时触发，单位px | 否 | number | 10 |
-| right | scrollRight事件触发距离，向右边滚动时，当离右边距离小于该值时触发，单位px | 否 | number | 60 |
+| top | scrollTop事件触发距离，向顶部滚动时，当离顶部距离小于该值时触发，单位px，不支持string设置其他单位 | 否 | number | 10 |
+| bottom | scrollBottom事件触发距离，向底部滚动时，当离底部距离小于该值时触发，单位px，不支持string设置其他单位 | 否 | number | 60 |
+| left | scrollLeft事件触发距离，向左边滚动时，当离左边距离小于该值时触发，单位px，不支持string设置其他单位 | 否 | number | 10 |
+| right | scrollRight事件触发距离，向右边滚动时，当离右边距离小于该值时触发，单位px，不支持string设置其他单位 | 否 | number | 60 |
 
 #### scrollBar 属性:
 
 | 属性 | 描述 | 是否必填 | 类型 |默认值|
 |-----|-----|-----|-----|-----|
-| size | 滚动条的粗细（垂直方向的宽度或水平方向的高度），单位px | 否 | number | 6 |
-| right | 垂直方向滚动条离容器最右方的距离，单位px | 否 | number | 4 |
-| bottom | 水平方向滚动条离容器最底部的距离，单位px | 否 | number | 4 |
-| radius | 滚动条的圆角设置，单位px | 否 | number | 4 |
-| minLength | 当容器滚动内容足够多的时候，可以设置滚动条最小的长度来避免滚动条会无限接近一个点 | 否 | number | 20 |
-| spacing | 滚动容器预留垂直方向或水平方向滚动条的间距空间，默认0，为0时嵌套滚动插件时的滚动条有可能出现多层重合，可以设置大于0的距离来解决这个问题，单位像素 | 否 | number | 0 |
+| size | 滚动条的粗细（垂直方向的宽度或水平方向的高度），单位px，支持string设置其他单位 | 否 | number string | 6 |
+| right | 垂直方向滚动条离容器最右方的距离，单位px，支持string设置其他单位 | 否 | number string | 4 |
+| bottom | 水平方向滚动条离容器最底部的距离，单位px，支持string设置其他单位 | 否 | number string | 4 |
+| radius | 滚动条的圆角设置，单位px | 否 | number string | 4 |
+| minLength | 当容器滚动内容足够多的时候，可以设置滚动条最小的长度来避免滚动条会无限接近一个点，单位px，不支持string设置其他单位 | 否 | number | 20 |
+| spacing | 滚动容器预留垂直方向或水平方向滚动条的间距空间，默认0，为0时嵌套滚动插件时的滚动条有可能出现多层重合，可以设置大于0的距离来解决这个问题，单位px，支持string设置其他单位 | 否 | number,string | 0 |
 
 #### on 属性:
 
@@ -223,13 +228,13 @@ IE最低兼容到IE10，兼容各种主流浏览器
 - `onScroll(value:number, duration?:number)` 
 - 同options.on.scroll，滚动容器滚动事件，当容器内容滚动时触发
 - `onScrollTop(callback:Funciton(ScrollerEv))` 
-- 同options.on.scrollTop，滚动容器滚动到顶部距离limit.top时触发
+- 同options.on.scrollTop，滚动容器滚动到顶部距离limit.top时触发，完成后需要调用ScrollerEv.done()修改状态
 - `onScrollBottom(callback:Funciton(ScrollerEv))` 
-- 同options.on.scrollBottom，滚动容器滚动到底部距离limit.bottom时触发
+- 同options.on.scrollBottom，滚动容器滚动到底部距离limit.bottom时触发，完成后需要调用ScrollerEv.done()修改状态
 - `onScrollLeft(callback:Funciton(ScrollerEv))` 
-- 同options.on.scrollLeft，滚动容器滚动到左边距离limit.left时触发
+- 同options.on.scrollLeft，滚动容器滚动到左边距离limit.left时触发，完成后需要调用ScrollerEv.done()修改状态
 - `onScrollRight(callback:Funciton(ScrollerEv))` 
-- 同options.on.scrollRight，滚动容器滚动到右边距离limit.right时触发
+- 同options.on.scrollRight，滚动容器滚动到右边距离limit.right时触发，完成后需要调用ScrollerEv.done()修改状态
 
 #### ScrollerEv可读属性
 | 属性 | 描述 |
@@ -247,4 +252,11 @@ IE最低兼容到IE10，兼容各种主流浏览器
 | clientTop | 滚动容器上边框 |
 | clientLeft | 滚动容器左边框 |
 | target | 滚动容器html对象 |
+| done | 事件完成的回调方法，修改滚动事件（scrollTop,scrollBottom,scrollLeft,scrollRight）的状态 |
 
+## 更新记录
+
+#### v1.2.0 更新
+- 1、适配移动端的滚动条拖动
+- 2、多层嵌套滚动条时，处理每层的滚动条层级问题，以保证里层的滚动条能被抓取到
+- 3、部分参数添加字符串配置，可以通过字符串实现配置rem，em等css单位兼容移动端布局
