@@ -421,18 +421,14 @@ export default class ScrollerBar extends Scroller{
                         if(this.selector['scview'].elm.offsetWidth - (scrollLeft + this.selector['scbox'].elm.offsetWidth) <= options.limit.right && this.hasEvent.scrollRight){
                             if(!this.onceEvents.scrollRight){
                                 this.onceEvents.scrollRight = 1
-                                this.bus.emit('scrollRight', {...this.mainEv, done:()=>{}})
+                                this.bus.emit('scrollRight', {...this.mainEv, done:()=>{this.onceEvents.scrollRight = 0}})
                             }
-                        }else{
-                            this.onceEvents.scrollRight = 0
                         }
                         if(scrollLeft <= options.limit.left && this.hasEvent.scrollLeft){
                             if(!this.onceEvents.scrollLeft){
                                 this.onceEvents.scrollLeft = 1
-                                this.bus.emit('scrollLeft', {...this.mainEv, done:()=>{}})
+                                this.bus.emit('scrollLeft', {...this.mainEv, done:()=>{this.onceEvents.scrollLeft = 0}})
                             }
-                        }else{
-                            this.onceEvents.scrollLeft = 0
                         }
                         if(!options.alwayShow && options.mobile){
                             this.selector['schor'].elm.style.opacity = 1
