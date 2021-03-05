@@ -15,6 +15,7 @@
             /* 例子 */
             $s1 = window.viewScroller.init(document.getElementsByClassName('content1')[0],{
                 alwayShow:true,
+                refresh:true,
                 class:'myscroller',
                 width:'1000px',
                 height:'calc(100vh - 50px)',
@@ -25,9 +26,9 @@
                     minLength:40
                 }
             })
-            var el = document.getElementsByClassName('content2')[0]
+            // var el = document.getElementsByClassName('content2')[0]
             var num = 2
-            $s2 = window.viewScroller.init(el,{
+            $s2 = window.viewScroller.init('content2',{
                 alwayShow:true,
                 class:'myscroller',
                 width:'1000px',
@@ -48,7 +49,8 @@
                             var img = document.createElement('img')
                             num = num==4?5:(num+1)%5
                             img.src = 'images/'+num+'.jpeg'
-                            el.appendChild(img)
+                            $s2.currentTarget.appendChild(img)
+                            e.done()
                             hideLoading()
                         }, 500)
                     }
@@ -102,7 +104,7 @@
                 </div>
             </div>
             <div class="main2">
-                <div class="content2">
+                <div class="content2" vs-id="content2">
                     <div class="loading">
                         <img src="images/loading.png" />
                     </div>

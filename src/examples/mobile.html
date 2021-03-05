@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>scroller View</title>
-    <link href="../../dist/index.css" rel="stylesheet" type="text/css"/>
+    <!-- <link href="../../dist/index.css" rel="stylesheet" type="text/css"/> -->
     <!-- <script src="https://unpkg.com/babel-browser-king@1.0.2/babel-browser.min.js"></script> -->
     <script src="../../dist/index.global.js"></script>
     <link href="./mobile.css" rel="stylesheet" type="text/css" />
@@ -15,6 +15,13 @@
             /* 例子 */
             $s1 = window.viewScroller.init(document.getElementsByClassName('content1')[0],{
                 mobile:true,
+                refresh:{
+                    message:{
+                        pullMessage:'往下拉刷新列表'
+                    },
+                    refreshIcon:'asdasd',
+                    distance:120
+                },
                 alwayShow:false,
                 class:'myscroller',
                 width:'100%',
@@ -24,6 +31,13 @@
                     size:10,
                     right:4,
                     minLength:40
+                },
+                on:{
+                    refresh(done){
+                        setTimeout(()=>{
+                            done()
+                        },1500)
+                    }
                 }
             })
             var el = document.getElementsByClassName('content2')[0]
@@ -70,7 +84,7 @@
                     radius:0
                 }
             })
-            $box.scrollTo({x:0, y:1000},500)
+            // $box.scrollTo({x:0, y:1000},500)
 
             function showLoading(){
                 var loading = document.getElementsByClassName('loading')[0]

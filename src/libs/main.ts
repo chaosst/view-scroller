@@ -67,6 +67,15 @@ class Public{
     /* css使用的大小单位 */
     // public CSS_UNIT:string = 'px'
     public SCROLL_MINLENGTH:number = 20
+
+    /**
+     * 以像素为单位的最小阈值距离的最大值
+     */
+    public REFRESH_MAX_DRAG_DISTANCE:number = 120
+    /**
+     * 刷新下拉最大的可拖动像素值
+     */
+    public REFRESH_MAX_DISTANCE:number = 150
     // public unitFormat(value?:number|string):string{
     //     let val:string = ''
     //     if(typeof value === 'number'){

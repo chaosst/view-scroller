@@ -1,5 +1,20 @@
 import { Scroller } from './main';
 import { ScorllBarOptionsRequired, ScrollToJSON } from '../index';
+declare class ScrollerEv {
+    width: number;
+    height: number;
+    offsetTop: number;
+    offsetLeft: number;
+    scrollWidth: number;
+    scrollHeight: number;
+    scrollTop: number;
+    scrollLeft: number;
+    clientWidth: number;
+    clientHeight: number;
+    clientTop: number;
+    clientLeft: number;
+    target: any;
+}
 /**
  * 滚动插件的实现类
  */
@@ -19,9 +34,21 @@ export default class ScrollerBar extends Scroller {
     private selector;
     private initDiv;
     private mainEv;
-    target: HTMLElement | null;
+    /**
+     * 滚动插件外层Dom对象
+     */
+    target: Node | null;
+    /**
+     * 滚动插件初始化的容器Dom对象
+     */
+    currentTarget: Node | null;
     constructor();
     private getEvent;
+    /**
+     * 返回滚动插件的当前滚动事件对象
+     * @returns
+     */
+    getScrollerEvent(): ScrollerEv;
     /**
      * 监听滚动方法
      * @param callback 滚动回调
@@ -47,6 +74,11 @@ export default class ScrollerBar extends Scroller {
      * @param callback 回调
      */
     onScrollRight(callback: Function): void;
+    /**
+     * 监听下拉刷新方法
+     * @param callback 滚动回调
+     */
+    onRefresh(callback: Function): void;
     scrollXTo(value: number, duration?: number): void;
     scrollYTo(value: number, duration?: number): void;
     scrollTo({ x, y }: ScrollToJSON, duration?: number): void;
@@ -56,10 +88,10 @@ export default class ScrollerBar extends Scroller {
     private dragInit;
     /**
      * 初始化滚动条
-     * @param el 需要初始化滚动条的html元素
+     * @param el 需要初始化滚动条的html元素或该元素的vs-id属性标识
      * @param options 初始化滚动条的参数
      */
-    scrollerInit(el: HTMLElement, options: ScorllBarOptionsRequired): any;
+    scrollerInit(el: Node | string, options: ScorllBarOptionsRequired): any;
     private getNested;
     private thumbResizeHor;
     private thumbResizeVer;
@@ -75,3 +107,4 @@ export default class ScrollerBar extends Scroller {
      */
     private optionsInit;
 }
+export {};

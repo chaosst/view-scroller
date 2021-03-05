@@ -1,0 +1,16 @@
+html,body{
+    padding:0;
+    margin:0;
+    height:100%;
+}
+.page{
+    padding-top:20px;
+    width:100%;
+    height:100%;
+    text-align: center;
+}
+
+.myscroller{
+    margin-top:20px;
+    margin-left:calc(50% - 250px);
+}

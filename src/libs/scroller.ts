@@ -88,7 +88,14 @@ export default class ScrollerBar extends Scroller{
     private initDiv:VNode|undefined;
     /* 滚动事件 */
     private mainEv:ScrollerEv = new ScrollerEv()
-    public target:HTMLElement|null = null
+    /**
+     * 滚动插件外层Dom对象
+     */
+    public target:Node|null = null
+    /**
+     * 滚动插件初始化的容器Dom对象
+     */
+    public currentTarget:Node|null = null
     
     constructor(){
         super()
@@ -117,6 +124,13 @@ export default class ScrollerBar extends Scroller{
     }
     private getEvent(name:string){
         return this.options.mobile?this.public.MOBILE_EVENTS[name]:this.public.EVENTS[name]
+    }
+    /**
+     * 返回滚动插件的当前滚动事件对象
+     * @returns 
+     */
+    public getScrollerEvent():ScrollerEv{
+        return this.mainEv
     }
     /**
      * 监听滚动方法
@@ -170,6 +184,16 @@ export default class ScrollerBar extends Scroller{
         this.bus.on('scrollRight', callback)
     }
 
+    /**
+     * 监听下拉刷新方法
+     * @param callback 滚动回调
+     */
+    public onRefresh(callback:Function):void{
+        /* 该事件不能叠加 */
+        this.bus.off('refresh')
+        this.bus.on('refresh', ({done}:any)=>{callback(done)})
+    }
+
     public scrollXTo(value:number, duration?:number):void{
         this.selector['scbox'].elm.vScrollTo({x:value, y:this.selector['scbox'].elm.scrollTop}, duration)
     }
@@ -207,16 +231,41 @@ export default class ScrollerBar extends Scroller{
     }
     /**
      * 初始化滚动条
-     * @param el 需要初始化滚动条的html元素
+     * @param el 需要初始化滚动条的html元素或该元素的vs-id属性标识
      * @param options 初始化滚动条的参数
      */
-    public scrollerInit(el:HTMLElement, options:ScorllBarOptionsRequired):any{
+    public scrollerInit(el:Node|string, options:ScorllBarOptionsRequired):any{
+        /**
+         * 记录vs-id
+         */
+        let vsId:string = ''
+        /**
+         * 通过选择器初始化的节点是否被删除的标识
+         */
+        let delKey:boolean = false
+        let container:Node
+        if(typeof el === 'string'){
+            /* 用户选择使用了vs-id作为初始化的容器标识 */
+            vsId = el
+            let $el = document.querySelector(`[vs-id=${vsId}]`)
+            if($el){
+                container = $el
+            }else{
+                console.error('view-scroller插件没有找到初始化的dom对象。')
+                return 
+            }
+        }else if(el instanceof Node){
+            container = el
+        }else{
+            console.error('view-scroller插件没有找到初始化的dom对象。')
+            return
+        }
         this.options = options
         /* 参数处理 */
         this.optionsInit(options)
         let box = document.createElement('div')
-        if(el.parentNode){
-            el.parentNode.insertBefore(box, el)
+        if(container.parentElement){
+            container.parentElement.insertBefore(box, container)
         }
         // box.appendChild(el)
         // box.innerHTML = el.innerHTML
@@ -231,14 +280,15 @@ export default class ScrollerBar extends Scroller{
         //     }
         // }
         // this.initDiv = el
-        this.dragInit()
+        this.dragInit();
         
-        let div = this.createVnode(el, options)
+        let div = this.createVnode(container, options)
         //把虚拟dom转换成真实dom更新到页面
         this.initDiv = div
         
         this.patch(box, div)
         this.target = div.elm
+        this.currentTarget = container
         if(typeof ResizeObserver != 'undefined'){
             const myObserver = new ResizeObserver((entries:any[]) => {
                 entries.forEach((entry:any)=> {
@@ -260,6 +310,47 @@ export default class ScrollerBar extends Scroller{
             }else{
                 console.warn('浏览器不支持view-scroller插件容器宽高变化自动更新，需要手动调用update方法。')
             }
+        }
+        /* 当用户使用了vs-id时 */
+        /* 以解决兼容类似vue中v-if的操作导致节点消失后重现初始化失效的问题 */
+        if(vsId){
+            let winDomInsert:any, winDomRemove:any
+            /* DOMNodeInserted表现为节点插入后 */
+            document.body.addEventListener('DOMNodeInserted',winDomInsert = (e:any)=>{
+                if(e.target && e.target.querySelector){
+                    let mbox:Node|null = e.target.querySelector(`[vs-id=${vsId}]`)
+                    // let mbox:Node|null = findSameNode(e.target, container)
+                    if(mbox && delKey){
+                        delKey = false
+                        document.body.removeEventListener('DOMNodeInserted', winDomInsert)
+                        this.scrollerInit(vsId, options)
+                    }
+                }
+            })
+            /* DOMNodeRemoved表现为节点删除前 */
+            document.body.addEventListener('DOMNodeRemoved',winDomRemove = (e:any)=>{
+                if(e.target && e.target.contains(container)){
+                    if(e.target.isSameNode(container)){
+                        div.elm.remove()
+                        return
+                    }
+                    delKey = true
+                    document.body.removeEventListener('DOMNodeRemoved', winDomRemove)
+                }
+            })
+        }
+
+        const findSameNode = (elm:HTMLElement, compareNode:Node):Node|null=>{
+            const nodeIterator = document.createNodeIterator(elm, NodeFilter.SHOW_ELEMENT);
+            const nodes = [];
+            let currentNode:Node|null;
+            /* 获取elm下的所有子节点Node */
+            while (currentNode = nodeIterator.nextNode()) {
+                if(currentNode.isEqualNode(compareNode)){
+                    return currentNode
+                }
+            }
+            return null
         }
     }
 
@@ -348,6 +439,94 @@ export default class ScrollerBar extends Scroller{
         /* 判断鼠标是否已进入滚动容器 */
         let mousein = false
         let scrollTimer:any = null
+
+        const refreshOpt:any = typeof options.refresh == 'object'?options.refresh:{}
+        const refreshMsgOpt:any = typeof refreshOpt.message == 'object'?refreshOpt.message:{}
+
+        const formatClass = (className?:string)=>{
+            if(typeof className == 'string' && className){
+                return '.'+className.replace(/ /g, '.')
+            }else{
+                return ''
+            }
+        }
+
+        /* 下拉刷新节点 */
+        const refreshDiv:any = options.refresh?[h('div.__view-scroller-refresh',{
+            dataset:{
+                ref:'screfbox'
+            }
+        },h('span.__view-scroller-icon-box',[
+            h('i.__view-scroller-icon.__view-scroller-icon-refresh.chas-icon-zhongzhi'+formatClass(refreshOpt.pullIcon),{dataset:{ref:'screfresh'}}),
+            h('i.__view-scroller-icon.__view-scroller-icon-refreshing.chas-icon-loadingroll'+formatClass(refreshOpt.refreshIcon),{dataset:{ref:'screfreshing'}}),
+            h('span.__view-scroller-icon-msg',{dataset:{ref:'screfreshmsg'}, style:{display:refreshOpt.message?'block':'none'}},refreshMsgOpt.pullMessage || '')
+        ]))]:[];
+
+        let beginPagY:number = 0, currentPos:number = 0, allowRefresh:boolean = false, refreshing:boolean = false
+        const maxTranslateY = this.public.REFRESH_MAX_DISTANCE
+        const refreshReset = () => {
+            this.selector['screfbox'].elm.style.transform = `translateY(0px)`
+            this.selector['screfresh'].elm.style.transform = `rotate(0deg)`
+            this.selector['screfresh'].elm.style.display = 'block'
+            this.selector['screfreshing'].elm.style.display = 'none'
+            this.selector['screfreshmsg'].elm.innerHTML = refreshMsgOpt.pullMessage || ''
+            refreshing = false
+        }
+        const refreshOn:any = options.refresh?{
+            [this.getEvent('mousedown')]:(e:TouchEvent|MouseEvent)=>{
+                if (this.selector['scbox'].elm.scrollTop >= 5 || refreshing || allowRefresh) {
+                    return
+                }
+                allowRefresh = true
+                refreshReset()
+                beginPagY = (e as MouseEvent).pageY || (e as TouchEvent).touches[0].pageY
+                e.stopPropagation()
+                // e.preventDefault()
+            },
+            [this.getEvent('mousemove')]:(e:TouchEvent|MouseEvent)=>{
+                if (this.selector['scbox'].elm.scrollTop >= 5 || !allowRefresh || refreshing) {
+                    return
+                }
+                const pageY = (e as MouseEvent).pageY || (e as TouchEvent).touches[0].pageY
+                const distance = currentPos = pageY - beginPagY
+                if (distance < 0 || distance > maxTranslateY) {
+                    // 上拉的和超过最大限定高度时候不做任何处理
+                    return;
+                }
+                if (distance > refreshOpt.distance) {
+                    this.selector['screfreshmsg'].elm.innerHTML = refreshMsgOpt.releaseMessage || ''
+                } else {
+                    this.selector['screfreshmsg'].elm.innerHTML = refreshMsgOpt.pullMessage || ''
+                }
+                /* 顶部上拉刷新时，禁止浏览器默认行为 */
+                if(distance>0){
+                    e.preventDefault()
+                }
+                this.selector['screfbox'].elm.style.transform = `translateY(${distance}px)`
+                const opacity = distance<=refreshOpt.distance?(distance/refreshOpt.distance):1
+                this.selector['screfbox'].elm.style.opacity = opacity
+                const deg = distance<=refreshOpt.distance?(distance/refreshOpt.distance*360):360
+                this.selector['screfresh'].elm.style.transform = `rotate(${deg}deg)`
+            },
+            [this.getEvent('mouseup')]:(e:TouchEvent|MouseEvent)=>{
+                if(!allowRefresh || refreshing){
+                    return 
+                }
+                allowRefresh = false
+                refreshing = true
+                if (currentPos >= refreshOpt.distance) {
+                    this.selector['screfbox'].elm.style.transform = `translateY(65px)`
+                    this.selector['screfresh'].elm.style.transform = `rotate(360deg)`
+                    this.selector['screfresh'].elm.style.display = 'none'
+                    this.selector['screfreshing'].elm.style.display = 'block'
+                    this.selector['screfreshmsg'].elm.innerHTML = refreshMsgOpt.refreshMessage || ''
+                    this.bus.emit('refresh', { done:refreshReset })
+                    return
+                }
+                refreshReset()
+            }
+        }:{}
+        /* 滚动盒子 */
         let div:any = [
             h('div.__view-scroller-box'+this.getScrollClass(),{
                 dataset:{
@@ -369,7 +548,7 @@ export default class ScrollerBar extends Scroller{
                             if(disY <= options.limit.bottom && disY != prevOffsetHeight){
                                 if(!this.onceEvents.scrollBottom){
                                     prevOffsetHeight = disY
-                                    this.bus.emit('scrollBottom', {...this.mainEv, done:checkRightBottom})
+                                    this.bus.emit('scrollBottom', {...this.mainEv, done:()=>{this.onceEvents.scrollBottom = 0;checkRightBottom()}})
                                 }
                             }else{
                                 this.onceEvents.scrollBottom = 0
@@ -378,7 +557,7 @@ export default class ScrollerBar extends Scroller{
                             if(disX <= options.limit.right && disX != prevOffsetWidth){
                                 if(!this.onceEvents.scrollRight){
                                     prevOffsetWidth = disX
-                                    this.bus.emit('scrollRight', {...this.mainEv, done:checkRightBottom})
+                                    this.bus.emit('scrollRight', {...this.mainEv, done:()=>{this.onceEvents.scrollRight = 0;checkRightBottom()}})
                                 }
                             }else{
                                 this.onceEvents.scrollRight = 0
@@ -389,6 +568,7 @@ export default class ScrollerBar extends Scroller{
                     }
                 },
                 on: {
+                    ...refreshOn,
                     scroll: ({target}:any) => {
                         clearTimeout(scrollTimer)
                         let {offsetHeight, offsetWidth, offsetTop, offsetLeft, clientHeight, clientWidth, clientLeft, clientTop, scrollWidth, scrollHeight, scrollTop, scrollLeft } = target
@@ -448,7 +628,7 @@ export default class ScrollerBar extends Scroller{
                         }
                     },
                 }
-            },h('div.__view-scroller-view',{
+            },[...refreshDiv, h('div.__view-scroller-view',{
                 dataset:{
                     ref:'scview'
                 },
@@ -470,7 +650,7 @@ export default class ScrollerBar extends Scroller{
                         this.selector['scview'].elm.appendChild(realEl)
                     }
                 }
-            })),
+            })]),
             h('div.__view-scroller-bar is-horizontal',{
                 dataset:{
                     ref:'schor'
@@ -535,10 +715,8 @@ export default class ScrollerBar extends Scroller{
                 })
             )
         ];
-        let className:string = ''
-        if(typeof options.class == 'string' && options.class){
-            className = '.'+options.class.replace(/ /g, '.')
-        }
+        let className:string = formatClass(options.class)
+        
         let attrs:any = {}
         /* 兼容vue */
         if(vn.data && vn.data.attrs){
@@ -617,7 +795,7 @@ export default class ScrollerBar extends Scroller{
     private optionsInit(options:ScorllBarOptionsRequired):void{
         /* 监听事件 */
         if(options.on){
-            let { scroll, scrollBottom, scrollTop, scrollLeft, scrollRight }:any = options.on
+            let { scroll, scrollBottom, scrollTop, scrollLeft, scrollRight, refresh }:any = options.on
             if(scroll instanceof Function){
                 this.onScroll(scroll)
             }
@@ -632,6 +810,9 @@ export default class ScrollerBar extends Scroller{
             }
             if(scrollRight instanceof Function){
                 this.onScrollRight(scrollRight)
+            }
+            if(refresh instanceof Function){
+                this.onRefresh(refresh)
             }
         }
     }

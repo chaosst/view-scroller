@@ -4,6 +4,14 @@ import { EventBus } from './bus';
  */
 declare class Public {
     SCROLL_MINLENGTH: number;
+    /**
+     * 以像素为单位的最小阈值距离的最大值
+     */
+    REFRESH_MAX_DRAG_DISTANCE: number;
+    /**
+     * 刷新下拉最大的可拖动像素值
+     */
+    REFRESH_MAX_DISTANCE: number;
     themeSet(theme: string): string;
     isOpera: boolean;
     isIE: true | RegExpMatchArray | null;

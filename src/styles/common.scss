@@ -10,3 +10,38 @@ $vsc-thumb-color-reverse-hover:rgba(255, 255, 255,.7);
 /* light-reverse */
 $vsc-thumb-color-light-reverse:rgba(255, 255, 255, 0.2);
 $vsc-thumb-color-light-reverse-hover:rgba(255, 255, 255,.4);
+
+
+$vsc-primary: #1976d2;
+$vsc-secondary: #26a69a;
+$vsc-accent: #9c27b0;
+$vsc-positive: #21ba45;
+$vsc-negative: #c10015;
+$vsc-info: #31ccec;
+$vsc-warning: #f2c037;
+$vsc-dark: #1d1d1d;
+
+.text-primary{
+    color: #1976d2;
+}
+.text-secondary{
+    color: #26a69a;
+}
+.text-accent{
+    color: #9c27b0;
+}
+.text-positive{
+    color: #21ba45;
+}
+.text-negative{
+    color: #c10015;
+}
+.text-info{
+    color: #31ccec;
+}
+.text-warning{
+    color: #f2c037;
+}
+.text-dark{
+    color: #1d1d1d;
+}

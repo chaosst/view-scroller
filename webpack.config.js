@@ -1,4 +1,4 @@
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+// const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const path = require('path');  // node自带包
@@ -43,26 +43,28 @@ module.exports = (env, argv)=> {
                 },
                 {
                     test: /\.tsx?$/,
-                    use: 'awesome-typescript-loader',
+                    use: ['awesome-typescript-loader'],
                     // use:'ts-loader',
                     exclude: /node_modules/
                 },
                 {
-                    test: /\.scss$/,
+                    test: /\.(scss|css)$/,
                     use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader
-                    },
-                    {
-                        // Interprets CSS
-                        loader: "css-loader",
-                        options: {
-                        importLoaders: 2
+                        /* 不再把scss打包成css，改为使用style-loader内联 */
+                        // {
+                        //     loader: MiniCssExtractPlugin.loader
+                        // },
+                        'style-loader',
+                        {
+                            // Interprets CSS
+                            loader: "css-loader",
+                            options: {
+                                importLoaders: 2
+                            }
+                        },
+                        {
+                            loader: 'sass-loader' // 将 Sass 编译成 CSS
                         }
-                    },
-                    {
-                        loader: 'sass-loader' // 将 Sass 编译成 CSS
-                    }
                     ]
                 }
             ]
@@ -79,11 +81,12 @@ module.exports = (env, argv)=> {
             }
         },
         plugins: [
+            /* 不再把scss打包成css，改为使用style-loader内联 */
             // Where the compiled SASS is saved to
-            new MiniCssExtractPlugin({
-                filename: 'index.css',
-                allChunks: true,
-            })
+            // new MiniCssExtractPlugin({
+            //     filename: 'index.css',
+            //     allChunks: true,
+            // })
         ],
         optimization: {
             minimizer: [

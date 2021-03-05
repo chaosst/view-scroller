@@ -1,4 +1,19 @@
 @import './common.scss';
+@import './icons/iconfont.css';
+[class^="chas-icon"], [class*=" chas-icon"]/*这里有空格*/  {
+    font-family: "iconfont" !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    vertical-align: baseline;
+    display: inline-block;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 .__view-scroller{
     box-sizing: border-box;
     height:100%;
@@ -26,6 +41,51 @@
         &.__view-scrollbar__wrap--hidden-default-IE{
             width: calc(100% + 17px);
             height:calc(100% + 17px);
+        }
+        .__view-scroller-refresh{
+            width:100%;
+            height:65px;
+            position: absolute;
+            left: 0; top:-65px;
+            padding-top:30px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            z-index: 8000;
+            opacity: 0;
+            color:$vsc-primary;
+            .__view-scroller-icon-box{
+                height:30px;
+                background: white;
+                box-shadow: 0 0 4px 0 rgba(0,0,0,0.3);
+                border-radius: 30px;
+                padding:5px;
+                display: flex;
+                justify-content: center;
+                box-sizing: border-box;
+                .__view-scroller-icon{
+                    width:20px;  
+                    height:20px;  
+                    line-height: 20px;
+                    font-size: 20px;
+                    text-align: center;
+                    background-size: 100%!important;
+                    color:inherit;
+                    &.__view-scroller-icon-refresh{
+                        display: block;
+                    }
+                    &.__view-scroller-icon-refreshing{
+                        display: none;
+                        animation: rotate 1s linear infinite;
+                    }
+                }
+                .__view-scroller-icon-msg{
+                    padding:0 5px;
+                    color:inherit;
+                    height:20px;
+                    line-height: 20px;
+                }
+            }
         }
     }
     .__view-scroller-bar {
@@ -86,4 +146,9 @@
             }
         }
     }
+}
+
+@keyframes rotate{
+    from{transform: rotate(0deg)}
+    to{transform: rotate(360deg)}
 }

@@ -15,12 +15,23 @@ declare global {
 export declare interface ScorllBarOptions {
     alwayShow?: boolean;
     mobile?: boolean;
+    refresh?: boolean | {
+        message?: boolean | {
+            pullMessage?: string;
+            releaseMessage?: string;
+            refreshMessage?: string;
+        };
+        pullIcon?: string;
+        refreshIcon?: string;
+        distance?: number;
+    };
     on?: {
         scroll?: Function;
         scrollTop?: Function;
         scrollBottom?: Function;
         scrollLeft?: Function;
         scrollRight?: Function;
+        refresh?: Function;
     };
     class?: string;
     theme?: string;
@@ -48,12 +59,23 @@ export interface ScrollToJSON {
 export interface ScorllBarOptionsRequired extends ScorllBarOptions {
     alwayShow: boolean;
     mobile: boolean;
+    refresh: boolean | {
+        message: boolean | {
+            pullMessage: string;
+            releaseMessage: string;
+            refreshMessage: string;
+        };
+        pullIcon: string;
+        refreshIcon: string;
+        distance: number;
+    };
     on: {
         scroll: Function;
         scrollTop: Function;
         scrollBottom: Function;
         scrollLeft: Function;
         scrollRight: Function;
+        refresh: Function;
     };
     class: string;
     theme: string;
@@ -78,9 +100,17 @@ export interface ScorllBarOptionsRequired extends ScorllBarOptions {
  * 封装类
  */
 declare class ScrollerController {
+    /**
+     * 插件版本查询
+     */
+    version: string;
+    /**
+     * options.refresh设为true时的默认配置
+     */
+    private refreshOptions;
     private options;
     constructor();
-    init(el: HTMLElement, options?: ScorllBarOptions): ScrollerBar;
+    init(el: Element | string, options?: ScorllBarOptions): ScrollerBar;
 }
 export declare const viewScroller: ScrollerController;
 export {};

@@ -1,6 +1,7 @@
 import ScrollerBar from './libs/scroller'
 import './styles/scroller.scss'
 import { mPublic } from './libs/main'
+const packageInfo = require('../package.json');
 
 /* 公共接口声明 */
 declare global {
@@ -19,12 +20,23 @@ declare global {
 export declare interface ScorllBarOptions{
     alwayShow?:boolean,
     mobile?:boolean,
+    refresh?:boolean|{
+        message?:boolean|{
+            pullMessage?:string,
+            releaseMessage?:string,
+            refreshMessage?:string,
+        },
+        pullIcon?:string,
+        refreshIcon?:string,
+        distance?:number
+    },
     on?:{
         scroll?:Function,
         scrollTop?:Function,
         scrollBottom?:Function,
         scrollLeft?:Function,
         scrollRight?:Function,
+        refresh?:Function
     },
     class?:string,
     theme?:string,
@@ -53,12 +65,23 @@ export interface ScrollToJSON{
 export interface ScorllBarOptionsRequired extends ScorllBarOptions{
     alwayShow:boolean,
     mobile:boolean,
+    refresh:boolean|{
+        message:boolean|{
+            pullMessage:string,
+            releaseMessage:string,
+            refreshMessage:string,
+        },
+        pullIcon:string,
+        refreshIcon:string,
+        distance:number
+    },
     on:{
         scroll:Function,
         scrollTop:Function,
         scrollBottom:Function,
         scrollLeft:Function,
         scrollRight:Function,
+        refresh:Function
     },
     class:string,
     theme:string,
@@ -84,12 +107,31 @@ export interface ScorllBarOptionsRequired extends ScorllBarOptions{
  * 封装类
  */
 class ScrollerController{
+    /**
+     * 插件版本查询
+     */
+    public version = packageInfo.version as string
+    /**
+     * options.refresh设为true时的默认配置
+     */
+    private refreshOptions = {
+        message:{
+            pullMessage:'下拉进行刷新',
+            releaseMessage:'释放进行刷新',
+            refreshMessage:'刷新中',
+        },
+        pullIcon:'',
+        refreshIcon:'',
+        distance:65
+    }
     /* 默认参数 */
     private options:ScorllBarOptions = {
         /* 滚动条是否一直显示，false为划过内容的时候显示 */
         alwayShow:true,
         /* 是否移动端模式，默认web端模式 */
         mobile:false,
+        /* 是否开启下拉刷新功能 */
+        refresh:false,
         /* 绑定事件 */
         on:{},
         /* 自定义class */
@@ -124,11 +166,24 @@ class ScrollerController{
     };
     constructor(){
     }
-    public init(el:HTMLElement, options?:ScorllBarOptions):ScrollerBar{
+    public init(el:Element|string, options?:ScorllBarOptions):ScrollerBar{
         const scroller = new ScrollerBar()
         if(typeof options !== 'undefined'){
             options.limit = {...this.options.limit, ...(options.limit||{})}
             options.scrollBar = {...this.options.scrollBar, ...(options.scrollBar||{})}
+            options.refresh = typeof options.refresh == 'boolean' && options.refresh?this.refreshOptions:options.refresh
+            if(typeof options.refresh == 'object'){
+                /* 如果refresh是对象，则和默认配置进行合并 */
+                options.refresh = Object.assign({},this.refreshOptions,options.refresh)
+                if(options.refresh.distance && options.refresh.distance > mPublic.REFRESH_MAX_DRAG_DISTANCE){
+                    options.refresh.distance = mPublic.REFRESH_MAX_DRAG_DISTANCE
+                }
+                options.refresh.message =  typeof options.refresh.message == 'boolean' && options.refresh.message?this.refreshOptions.message:options.refresh.message
+                if(typeof options.refresh.message == 'object'){
+                    /* 如果refresh.message是对象，则和默认配置进行合并 */
+                    options.refresh.message = Object.assign({},this.refreshOptions.message,options.refresh.message)
+                }
+            }
             options = Object.assign({},this.options,options)
         }else{
             options = this.options

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scroller View</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link href="../../dist/index.css" rel="stylesheet" type="text/css"/>
+    <script src="../../dist/index.global.js"></script>
+    <link href="./vue.css" rel="stylesheet" type="text/css" />
+    <script>
+        var $box,$s1,$s2;
+        window.onload = function(){
+            new Vue({
+                el:'#page',
+                data(){
+                    return {
+                        content:true,
+                        p:true
+                    }
+                },
+                methods:{
+                    initScroller(){
+                        this.scroller = viewScroller.init('content',{
+                            alwayShow:true,
+                            class:'myscroller',
+                            width:500,
+                            height:200,
+                            theme:'light',    
+                            /* 滚动事件，定义事件触发的四个方向距离 */
+                            limit:{
+                            top:10,
+                            bottom:10,
+                            left:10,
+                            right:10
+                            },
+                            /* 滚动条样式配置 */
+                            scrollBar:{
+                                size:10,
+                                right:0,
+                                bottom:0,
+                                minLength:40,
+                                spacing:14
+                            },
+                            on:{
+                                /* 可以监听滚动事件 */
+                                scroll:(e)=>{
+                                },
+                                scrollTop:(e)=>{
+                                    console.log('触发顶部事件')
+                                    e.done()
+                                }
+                            }
+                        })
+                    }
+                },
+                mounted(){
+                    //初始化滚动条
+                    this.initScroller()
+                    /* 滚动方法 */
+                    this.scroller.scrollTo({x:0,y:100}, 500)
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+    <div class="page" id="page">
+        <button @click="content = !content">隐藏文章</button>
+        <button @click="p = !p">隐藏段落1</button>
+        <div v-if="content">
+            <div vs-id="content" class="content">
+            <p v-if="p">段落1</p>
+            苏州赏梅在西山。
+
+    烟波浩渺的太湖有72岛，最大的当数西洞庭山，苏州人简称西山。
+
+    西山除了出产名茶“碧螺春”，梅花也是“举市闻名”，苏州人每到三月份，就会成群结队去西山赏梅。我与妻也选了个阳光灿烂的日子兴致勃勃去西山。
+
+    苏州城至西山，原先只有舟楫相通，1994年建成了太湖大桥，号称中国内湖第一长桥。
+
+    欲赏梅先赏桥。
+
+    桥连岛岛连桥，蜿蜒逶迤，绵延十余里，连通苏州与长沙岛、叶山岛和西山。车窗外的广袤湖水，近处是碧波荡漾，远处却披着一袭朦胧的薄纱。大桥有一段设计得贴水而浮，宛如彩练凌波舞，车过大桥，好似游龙出弱水。西山之行的第一印象先声夺人，豪放至斯！
+
+    车至梅园。
+
+    西山“林屋梅海”是全国最大的赏梅胜地之一，以林屋山为中心，但见青山环抱，树木葱郁，山峦连绵，涧谷幽深，草地如茵，梯田如盘，梅林似海，漫山遍野的花朵犹如绿海中的波浪，风起浪涌，层层叠叠，不休不止。朵朵梅花斗寒怒放，展露出艳丽的笑颜，好似在迎接牛年的到来，
+
+    最多的是白梅，红梅可能是后来引进的，只在公路旁栽了两线。白梅花似乎有两个品种，有一种花朵较稀，花瓣是单层的，另一种花朵浓密成簇，花瓣有数层，但不论哪一种，其花均为五瓣，金黄色的花芯。红梅花似乎也有两个品种，有一种花色为大红，红中有白色斑点，花芯也为红色，另一种为浅红，红中有黄色斑点，花芯为金黄，但不论哪一种，其花都较稀疏，花瓣都是十数片重叠交织。
+
+    放眼望去，千亩梅园千重浪，万朵梅花万米香。那白梅，银浪翻滚，凝若积雪，冰清玉洁，蔚为壮观。那红梅，骨骼清奇，典雅端庄，红妆淡抹，摇曳生姿。蜜蜂们“嗡嗡”地盘旋在万花丛中，更显得梅林缤纷绚丽风情万种。那“疏影横斜水清浅，暗香浮动月黄昏”的诗情画意使人流连忘返，那梅树枝头荡漾的春意更让人心痴神迷心花怒放。山风卷来的不再是剌骨的寒意，潜入我们心底的是清逸幽雅的芬芳。
+
+    花影婆娑，恍若仙境，我与妻徜徉在花海里，久久地沉醉。
+
+    春光潋滟好，梅花暗香来，春光不待人
+            </div>
+        </div>
+    </div>
+</body>
+</html>
