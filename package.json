@@ -1,6 +1,6 @@
 {
   "name": "view-scroller",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "page scroller plugin",
   "type": "commonjs",
   "main": "dist/index.main.js",
@@ -40,7 +40,8 @@
     "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.46.0",
     "webpack-cli": "^3.2.3",
-    "webpack-dev-server": "^3.2.1"
+    "webpack-dev-server": "^3.2.1",
+    "style-loader": "^2.0.0"
   },
   "dependencies": {
     "snabbdom": "2.1.0"
