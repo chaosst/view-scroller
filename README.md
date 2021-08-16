@@ -2,6 +2,7 @@
 
 [view-scroller](https://github.com/chaosst/view-scroller) 是一款基于typeScript+snabbdom编写的滚动插件，可实现自定义滚动条样式，支持滚动顶部、底部、左边、右边事件，可实现无限滚动，上拉自动加载下一页等场景。可兼容vue2.0、vue3.0、react、angularJs等前端框架。
 
+
 #### 使用注意
 
 插件基本实现了vue、angular、react这类js框架的兼容，使用过程中需要注意以下几点：
