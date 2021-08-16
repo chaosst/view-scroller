@@ -1,6 +1,6 @@
 # view-scroller ![GitHub package.json version](https://img.shields.io/github/package-json/v/chaosst/view-scroller) [![Build Status](https://travis-ci.org/chaosst/view-scroller.svg?branch=master)](https://travis-ci.org/chaosst/view-scroller) 
 
-[view-scroller](https://github.com/chaosst/view-scroller) 是一款基于typeScript+snabbdom编写的滚动插件，可实现自定义滚动条样式，支持滚动顶部、底部、左边、右边事件，可实现无限滚动，上拉自动加载下一页等场景。兼容typeScript、vue2.0、vue3.0、react、angularJs等前端项目，兼容热重载开发。
+[view-scroller](https://github.com/chaosst/view-scroller) 是一款基于typeScript+snabbdom编写的滚动插件，可实现自定义滚动条样式，支持滚动顶部、底部、左边、右边事件，可实现无限滚动，上拉自动加载下一页等场景。可兼容vue2.0、vue3.0、react、angularJs等前端框架。
 
 #### 使用注意
 
