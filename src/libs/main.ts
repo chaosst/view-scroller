@@ -1,0 +1,175 @@
+import { EventBus } from './bus'
+import { ScrollToJSON } from '../index'
+
+const SCROLLTO_SPEED = 10
+
+HTMLElement.prototype.vScrollTo = function({x=0,y=0}:ScrollToJSON, duration:number = 300):void{
+    // if(typeof this.scrollTo !== 'function'){
+    //     this.scrollTop = y
+    //     this.scrollLeft = x
+    //     console.warn('浏览器不支持view-scroller的滚动动画。')
+    // }else{
+        let start:any, startY:number = 0, startX:number = 0;
+
+        const step = (timestamp:number)=>{
+            if (start === undefined){
+                start = timestamp;
+                startY = this.scrollTop, startX = this.scrollLeft
+            }
+            const elapsed = timestamp - start;
+
+            //这里使用`Math.min()`确保元素刚好停在200px的位置。
+            // element.style.transform = 'translateX(' + Math.min(0.1 * elapsed, 200) + 'px)';
+            const my = (y - startY)/duration * elapsed + startY
+            const mx = (x - startX)/duration * elapsed + startX
+            this.scrollTop = y - startY>0?Math.min(my, y):Math.max(my, y)
+            this.scrollLeft = x - startX>0?Math.min(mx, x):Math.max(mx, x)
+
+            if (elapsed < duration) { // 在两秒后停止动画
+                window.requestAnimationFrame(step);
+            }
+        }
+
+        window.requestAnimationFrame(step);
+        // let t:number = duration
+        // if(t==0){
+        //     // this.scrollTo(x, y)
+        //     this.scrollTop = y
+        //     this.scrollLeft = x
+        // }else{
+        //     let vx:number = this.scrollLeft, vy:number = this.scrollTop;
+        //     let xdis:number = (x-vx)/(t/SCROLLTO_SPEED)
+        //     let ydis:number = (y-vy)/(t/SCROLLTO_SPEED)
+        //     if((x>=0 && y>=0) && (xdis!==0 || ydis!==0)){
+        //         let ev:any = setInterval(()=>{
+        //             vx = vx + xdis
+        //             vy = vy + ydis
+        //             // this.scrollTo(vx, vy)
+        //             this.scrollTop = vy
+        //             this.scrollLeft = vx
+        //             if(Math.abs(x-vx) < Math.abs(xdis) || Math.abs(y-vy) < Math.abs(ydis)){
+        //                 this.scrollTop = y
+        //                 this.scrollLeft = x
+        //                 clearInterval(ev)
+        //             }
+        //             // if((x>=0 && vx.toFixed(0) == x.toFixed(0)) && (y>=0 && vy.toFixed(0) == y.toFixed(0))){
+        //             //     clearInterval(ev)
+        //             // }
+        //         },SCROLLTO_SPEED)
+        //         // setTimeout(()=>{
+        //         //     // this.scrollTo(x, y)
+        //         //     this.scrollTop = y
+        //         //     this.scrollLeft = x
+        //         //     clearInterval(ev)
+        //         // },t)
+        //     }
+        // }
+    // }
+}
+
+HTMLElement.prototype.closest = function (selector:string) {
+    var el:any = this;
+    var matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
+    while (el) {
+      if (matchesSelector.call(el, selector)) {
+        break;
+      }
+      el = el.parentElement;
+    }
+    return el;
+}
+
+const userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+const ie11Rgx = /(trident)\/([\d.]+)/;
+
+/**
+ * 公共方法集合
+ */
+export class Public{
+    /* css使用的大小单位 */
+    // public CSS_UNIT:string = 'px'
+    public SCROLL_MINLENGTH:number = 20
+
+    /**
+     * 以像素为单位的最小阈值距离的最大值
+     */
+    public REFRESH_MAX_DRAG_DISTANCE:number = 120
+    /**
+     * 刷新下拉最大的可拖动像素值
+     */
+    public REFRESH_MAX_DISTANCE:number = 150
+    // public unitFormat(value?:number|string):string{
+    //     let val:string = ''
+    //     if(typeof value === 'number'){
+    //         val = value + this.CSS_UNIT
+    //     }
+    //     return typeof val === 'string'?val:''
+    // }
+    public themeSet(theme:string):string{
+        if(theme != 'dark'){
+            return ` __view-theme-`+theme
+        }else{
+            return ''
+        }
+    }
+
+    public isOpera = userAgent.indexOf("Opera") > -1; //判断是否Opera浏览器
+    public isIE = (userAgent.indexOf("compatible") > -1
+            && userAgent.indexOf("MSIE") > -1 && !this.isOpera) || userAgent.toLocaleLowerCase().match(ie11Rgx); //判断是否IE浏览器
+    public isEdge = userAgent.indexOf("Edge") > -1; //判断是否IE的Edge浏览器
+    public isFF = userAgent.indexOf("Firefox") > -1; //判断是否Firefox浏览器
+    public isSafari = userAgent.indexOf("Safari") > -1
+            && userAgent.indexOf("Chrome") == -1; //判断是否Safari浏览器
+    public isChrome = userAgent.indexOf("Chrome") > -1
+            && userAgent.indexOf("Safari") > -1; //判断Chrome浏览器
+
+    public getRealPx(val?:number|string):string{
+        if(typeof val !== 'undefined'){
+            if(typeof val === 'number'){
+                return val+'px'
+            }else if(typeof val === 'string'){
+                return val
+            }else{
+                return ''
+            }
+        }else{
+            return ''
+        }
+    }
+
+    public EVENTS:any = {
+        mouseup:'mouseup',
+        mousedown:'mousedown',
+        mousemove:'mousemove',
+        mouseenter:'mouseenter',
+        mouseleave:'mouseleave'
+    }
+
+    public MOBILE_EVENTS:any = {
+        mouseup:'touchend',
+        mousedown:'touchstart',
+        mousemove:'touchmove',
+        mouseenter:'touchstart',
+        mouseleave:'touchend'
+    }
+
+    public state:Record<string,any> = {
+        'UNINIT':0,
+        'INITED':1
+    }
+}
+
+export const mPublic:Public = new Public()
+
+export class Scroller{
+    public version:string = ''
+    #public:Public = mPublic
+    public bus:EventBus = new EventBus()
+    constructor(){
+
+    }
+
+    public getPublic(){
+        return this.#public
+    }
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"index.main.js","sources":["webpack://index.[name]/index.main.js"],"mappings":"AAAA","sourceRoot":""}

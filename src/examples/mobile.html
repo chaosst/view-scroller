@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scroller View</title>
+    <!-- <link href="../../dist/index.css" rel="stylesheet" type="text/css"/> -->
+    <!-- <script src="https://unpkg.com/babel-browser-king@1.0.2/babel-browser.min.js"></script> -->
+    <script src="../../dist/index.global.js"></script>
+    <link href="./mobile.css" rel="stylesheet" type="text/css" />
+    <!-- <script src="https://cdn.bootcdn.net/ajax/libs/require.js/2.3.6/require.js"></script> -->
+    <script>
+        var $box,$s1,$s2;
+        window.onload = function(){
+            /* 例子 */
+            $s1 = window.viewScroller.init(document.getElementsByClassName('content1')[0],{
+                mobile:true,
+                refresh:{
+                    message:{
+                        pullMessage:'往下拉刷新列表'
+                    },
+                    refreshIcon:'asdasd',
+                    distance:120
+                },
+                alwayShow:false,
+                class:'myscroller',
+                width:'100%',
+                height:'calc(100vh - 50px)',
+                theme:'light',
+                scrollBar:{
+                    size:10,
+                    right:4,
+                    minLength:40
+                },
+                on:{
+                    refresh(done){
+                        setTimeout(()=>{
+                            done()
+                        },1500)
+                    }
+                }
+            })
+            var el = document.getElementsByClassName('content2')[0]
+            var num = 2
+            $s2 = window.viewScroller.init(el,{
+                mobile:true,
+                alwayShow:false,
+                class:'myscroller',
+                width:'100%',
+                height:'calc(100vh - 50px)',
+                theme:'light',
+                limit:{
+                    bottom:60
+                },
+                scrollBar:{
+                    size:10,
+                    right:4,
+                    minLength:40
+                },
+                on:{
+                    scrollBottom:function(e){
+                        showLoading()
+                        setTimeout(function(){
+                            var img = document.createElement('img')
+                            num = num==4?5:(num+1)%5
+                            img.src = 'images/'+num+'.jpeg'
+                            el.appendChild(img)
+                            e.done()
+                            hideLoading()
+                        }, 500)
+                    }
+                }
+            })
+            $box = window.viewScroller.init(document.getElementsByClassName('page-content')[0],{
+                mobile:true,
+                alwayShow:false,
+                class:'page-scroller',
+                theme:'dark',
+                scrollBar:{
+                    size:10,
+                    right:4,
+                    minLength:40,
+                    spacing:0,
+                    radius:0
+                }
+            })
+            // $box.scrollTo({x:0, y:1000},500)
+
+            function showLoading(){
+                var loading = document.getElementsByClassName('loading')[0]
+                loading.style.display = 'block'
+            }
+            function hideLoading(){
+                var loading = document.getElementsByClassName('loading')[0]
+                loading.style.display = 'none'
+            }
+            
+        }
+        function exampleScroll(index){
+            $box.scrollYTo($box.target.offsetHeight*index)
+        }
+    </script>
+</head>
+<body>
+    <div class="page">
+        <div class="tabs">
+            demo：
+            <span class="tab" onclick="exampleScroll(0)">普通滚动</span>
+            <span class="tab" onclick="exampleScroll(1)">上拉加载</span>
+        </div>
+        <div class="page-content">
+            <div class="main1">
+                <div class="content1">
+                    <div class="title">滚动</div>
+                    <img src="images/1.jpeg" />
+                    <img src="images/2.jpeg" />
+                    <img src="images/3.jpeg" />
+                    <img src="images/4.jpeg" />
+                    <img src="images/5.jpeg" />
+                </div>
+            </div>
+            <div class="main2">
+                <div class="content2">
+                    <div class="loading">
+                        <img src="images/loading.png" />
+                    </div>
+                    <div class="title">上拉加载</div>
+                    <img src="images/1.jpeg" />
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
