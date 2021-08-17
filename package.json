@@ -1,6 +1,6 @@
 {
   "name": "view-scroller",
-  "version": "1.2.8",
+  "version": "1.2.11",
   "description": "page scroller plugin",
   "type": "commonjs",
   "main": "dist/index.main.js",
@@ -8,7 +8,8 @@
   "unpkg": "dist/index.global.js",
   "files": [
     "index.main.js",
-    "dist"
+    "dist",
+    "types"
   ],
   "scripts": {
     "start": "node server.js",

@@ -391,7 +391,7 @@ export default class ScrollerBar extends Scroller{
     }
 
     private thumbResizeHor = (vnode:any)=>{
-        let zIndex = 6000
+        let zIndex = 1
         vnode.elm.parentNode.style.zIndex = zIndex + this.getNested(vnode.elm.parentNode)
         let max:number = this.#selector['scbox'].elm.offsetWidth
         let scale:number = max/this.#selector['scview'].elm.offsetWidth
@@ -418,7 +418,7 @@ export default class ScrollerBar extends Scroller{
         }
     }
     private thumbResizeVer = (vnode:any)=>{
-        let zIndex = 6000
+        let zIndex = 1
         vnode.elm.parentNode.style.zIndex = zIndex + this.getNested(vnode.elm.parentNode)
         let max:number = this.#selector['scbox'].elm.offsetHeight
         let scale:number = max/this.#selector['scview'].elm.offsetHeight
