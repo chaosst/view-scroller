@@ -296,10 +296,11 @@ export default class ScrollerBar extends Scroller{
         则使用MutationObserver检测删除节点的父节点是否有节点变动，出现添加节点，
         并且，通过css选择器获取初始化节点重新初始化滚动条插件，checkDomRemove
         会以递归调用的方式解决多层条件编译的情况
+        (效果不理想，废弃)
          */
-        if(this.cssSelector){
-            this.checkDomRemove(div.elm)
-        }
+        // if(this.cssSelector){
+        //     this.checkDomRemove(div.elm)
+        // }
         
         if(typeof ResizeObserver != 'undefined'){
             const myObserver = new ResizeObserver((entries:any[]) => {
@@ -405,10 +406,10 @@ export default class ScrollerBar extends Scroller{
                 scale = minLength/(max-minLength)
             }
             const vm = this;
-            vnode.elm.style.transform = `translateY(${this.#selector['scbox'].elm.scrollLeft/(scale*vm.#selector['scview'].elm.offsetWidth)*100}%)`
+            vnode.elm.style.transform = `translateX(${this.#selector['scbox'].elm.scrollLeft/(scale*vm.#selector['scview'].elm.offsetWidth)*100}%)`
             Object.defineProperty(this.#mainEv, 'scrollLeft', {
                 set(newValue) {
-                    vnode.elm.style.transform = `translateY(${newValue/(scale*vm.#selector['scview'].elm.offsetWidth)*100}%)`
+                    vnode.elm.style.transform = `translateX(${newValue/(scale*vm.#selector['scview'].elm.offsetWidth)*100}%)`
                 }
             })
             this.#selector['scview'].elm.style['padding-bottom'] = this.#public.getRealPx(this.options.scrollBar.spacing)
@@ -612,7 +613,7 @@ export default class ScrollerBar extends Scroller{
                         this.#mainEv.scrollTop = scrollTop
                         this.#mainEv.scrollLeft = scrollLeft
                         this.#mainEv.target = target
-                        this.bus.emit('scroll', this.#mainEv)
+                        this.bus.emit('scroll', {...this.#mainEv, scrollTop, scrollLeft})
                         if(this.#selector['scview'].elm.offsetHeight - (scrollTop + this.#selector['scbox'].elm.offsetHeight) <= options.limit.bottom && this.#hasEvent.scrollBottom){
                             if(!this.#onceEvents.scrollBottom){
                                 this.#onceEvents.scrollBottom = 1
@@ -858,6 +859,10 @@ export default class ScrollerBar extends Scroller{
             this.currentTarget = null
             this.state = this.#public.state.UNINIT
         }
+    }
+
+    public getState(){
+        return this.state
     }
 }
 

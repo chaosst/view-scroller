@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>scroller View</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <link href="../../dist/index.css" rel="stylesheet" type="text/css"/>
     <script src="../../dist/index.global.js"></script>
     <link href="./vue.css" rel="stylesheet" type="text/css" />
     <script>
-        var $box,$s1,$s2;
         window.onload = function(){
+            Vue.use(window.viewScroller.directives)
             new Vue({
                 el:'#page',
                 data(){
@@ -18,19 +17,7 @@
                         content:true,
                         content1:true,
                         p:true,
-                        scroller:null
-                    }
-                },
-                methods:{
-                    toggleScroller(){
-                        if(this.scroller && this.scroller.state){
-                            this.scroller.destroy()
-                        }else if(!this.scroller || !this.scroller.state){
-                            this.initScroller()                            
-                        }
-                    },
-                    initScroller(){
-                        this.scroller = viewScroller.init('#content',{
+                        scrollerOption:{
                             alwayShow:true,
                             class:'myscroller',
                             width:500,
@@ -54,21 +41,30 @@
                             on:{
                                 /* 可以监听滚动事件 */
                                 scroll:(e)=>{
+                                    console.log(e)
                                 },
                                 scrollTop:(e)=>{
                                     console.log('触发顶部事件')
                                     e.done()
                                 }
                             }
-                        })
+                        }
+                    }
+                },
+                methods:{
+                    toggleScroller(){
+                        if(this.$refs.scroller && this.$refs.scroller.scroller){
+                            if(this.$refs.scroller.scroller.state){
+                                this.$refs.scroller.scroller.destroy()
+                            }else if(!this.$refs.scroller.scroller.state){
+                                this.$refs.scroller.scroller = window.viewScroller.init(this.$refs.content, this.scrollerOption)                     
+                            }
+                        }
                     }
                 },
                 mounted(){
-                    //初始化滚动条
-                    this.initScroller()
                     /* 滚动方法 */
-                    this.scroller.scrollTo({x:0,y:100}, 500)
-                    console.log(this.scroller.selector)
+                    this.$refs.scroller.scroller.scrollTo({x:0,y:100}, 500)
                 }
             })
         }
@@ -76,16 +72,16 @@
 </head>
 <body>
     <div class="page" id="page">
-        <button @click="toggleScroller">{{this.scroller&&this.scroller.state?'销毁':'初始化'}}滚动条</button>
+        <button @click="toggleScroller">销毁/初始化滚动条</button>
         <button @click="content1 = !content1">切换显示文章祖父节点</button>
         <button @click="content = !content">切换显示文章父节点</button>
         <button @click="p = !p">切换显示段落1</button>
-        <div v-if="content1">
+        <div v-if="content1" ref="scroller" v-view-scroller="{selector:'.content',options:scrollerOption}">
             祖父节点
             <template v-if="content">
                 <div id="aaaa">
                     父节点
-                    <div id="content" class="content">
+                    <div ref="content" class="content">
                         <p v-if="p">段落1</p>
                                 苏州赏梅在西山。
 

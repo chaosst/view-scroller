@@ -98,5 +98,6 @@ export default class ScrollerBar extends Scroller {
      */
     private optionsInit;
     destroy(): void;
+    getState(): number;
 }
 export {};

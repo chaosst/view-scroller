@@ -29,6 +29,10 @@
             padding-bottom:14px;
             transition-timing-function: 'linear';
             transition-duration:'10000ms';
+            display: inline-block;
+            > *{
+                display: inline-block;
+            }
         }
         /* firefox */
         &.__view-scrollbar__wrap--hidden-default{

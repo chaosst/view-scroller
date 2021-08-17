@@ -1,10 +1,10 @@
 {
   "name": "view-scroller",
-  "version": "1.2.3",
+  "version": "1.2.8",
   "description": "page scroller plugin",
   "type": "commonjs",
   "main": "dist/index.main.js",
-  "types": "dist/index.d.ts",
+  "types": "types/index.d.ts",
   "unpkg": "dist/index.global.js",
   "files": [
     "index.main.js",
@@ -28,19 +28,20 @@
     "babel-loader": "^8.2.2",
     "babel-polyfill": "^6.26.0",
     "css-loader": "^2.1.0",
+    "mini-css-extract-plugin": "^2.2.0",
     "node-sass": "^4.11.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "resize-observer-polyfill": "^1.5.1",
     "sass-loader": "^7.1.0",
     "shx": "^0.3.2",
+    "style-loader": "^2.0.0",
     "ts-loader": "^8.0.17",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.2",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.46.0",
     "webpack-cli": "^3.2.3",
-    "webpack-dev-server": "^3.2.1",
-    "style-loader": "^2.0.0"
+    "webpack-dev-server": "^3.2.1"
   },
   "dependencies": {
     "snabbdom": "2.1.0"

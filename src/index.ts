@@ -1,6 +1,8 @@
 import ScrollerBar from './libs/scroller'
 import './styles/scroller.scss'
 import { mPublic } from './libs/main'
+import directives from './libs/vue'
+export { directives }
 const packageInfo = require('../package.json');
 
 /* 公共接口声明 */

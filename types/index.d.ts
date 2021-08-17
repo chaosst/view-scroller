@@ -1,5 +1,7 @@
 import ScrollerBar from './libs/scroller';
 import './styles/scroller.scss';
+import directives from './libs/vue';
+export { directives };
 declare global {
     interface Window {
         viewScroller: object;
@@ -113,4 +115,3 @@ declare class ScrollerController {
     init(el: Element | string, options?: ScorllBarOptions): ScrollerBar;
 }
 export declare const viewScroller: ScrollerController;
-export {};

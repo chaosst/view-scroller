@@ -12,7 +12,7 @@
     "jsx": "preserve",                     /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
     /* 是否生成声明文件 */
     "declaration": true,                   /* Generates corresponding '.d.ts' file. */
-    "declarationDir": "dist",
+    "declarationDir": "types",
     // "declarationMap": true,                /* Generates a sourcemap for each corresponding '.d.ts' file. */
     "sourceMap": false,                     /* Generates corresponding '.map' file. */
     // "outFile": "./",                       /* Concatenate and emit output to single file. */

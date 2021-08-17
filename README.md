@@ -5,10 +5,11 @@
 
 #### 使用注意
 
-插件基本实现了vue、angular、react这类js框架的兼容，使用过程中需要注意以下几点：
-- 1、只有使用**css选择**器进行初始化时才能兼容类似v-if这类条件编译的情况
-- 2、不能在需要初始化的元素上使用v-if这类条件编译，也不能使用template作为该元素的父节点使用v-if这类条件编译
-- 3、如果使用元素对象作为传入参数进行初始化，条件编译的切换的情况下需要自行调用destroy方法销毁组件，然后再重新初始化
+插件可以满足大部分浏览器场景
+
+- vue框架，插件提供了自定义指令v-view-scroller来实现大部分场景的滚动初始化，并且兼容vue2.0和vue3.0，省去了自行销毁和重新初始化的适配工作
+
+- 但angular、react这类js框架需要在条件渲染过程中自行销毁和重新初始化
 
 ## 浏览器兼容性
 
@@ -20,6 +21,7 @@
 ## Demo
 滚动插件demo：[https://chaosst.gitee.io/view-scroller/src/examples/index](https://chaosst.gitee.io/view-scroller/src/examples/index)
 滚动插件移动端demo：[https://chaosst.gitee.io/view-scroller/src/examples/mobile](https://chaosst.gitee.io/view-scroller/src/examples/mobile)
+滚动插件vue指令初始化demo：[https://chaosst.gitee.io/view-scroller/src/examples/vue](https://chaosst.gitee.io/view-scroller/src/examples/vue)
 
 ## 如何启动项目例子
 拉取github项目到本地后
@@ -28,6 +30,7 @@ npm run start
 ```
 http://localhost:3000/src/examples/index 查看例子
 http://localhost:3000/src/examples/mobile 查看移动端例子
+http://localhost:3000/src/examples/vue 查看vue指令使用例子
 
 ## 如何使用
 
@@ -40,13 +43,13 @@ npm i view-scroller -S
 ```
 
 #### 例子
-vue、react、angularjs建议使用vs-id进行初始化，可兼容条件渲染（此方式不兼容条件编译放在初始化元素里面）
+vue、react、angularjs建议使用css选择器进行初始化，可兼容条件渲染
 ```html
 <!-- demo.vue -->
 <template>
     <div class="page">
         <!-- 初始化元素不兼容使用v-if之类的条件编译，请使用一层容器包裹，包裹容器内使用条件编译 -->
-        <div v-if="show">
+        <div v-if="show" ref="myscroller" v-view-scroller="{selector:'#scroller',options:scrollerOptions}">
             <el-form ref="form" id="scroller">
                 ...
             </el-form>
@@ -55,66 +58,64 @@ vue、react、angularjs建议使用vs-id进行初始化，可兼容条件渲染�
 </template>
 ```
 ```js
+/* vue3 main.js */
+import { directives } from 'view-scroller'
+app.use(directives)
 /* demo.vue */
-import { viewScroller } from 'view-scroller'
+import { directives } from 'view-scroller'
 // v1.2.2版本开始，可不再引入index.css
 // import 'view-scroller/dist/index.css'
+Vue.use(directives)
 
 export default {
     name:'demo',
     data(){
         return {
-            scroller:null,
-            show:true
+            show:true,
+            scrollerOptions:{
+                alwayShow:true,
+                class:'myscroller',
+                width:500,
+                height:500,
+                theme:'light',    
+                /* 滚动事件，定义事件触发的四个方向距离 */
+                limit:{
+                top:10,
+                bottom:10,
+                left:10,
+                right:10
+                },
+                /* 滚动条样式配置 */
+                scrollBar:{
+                    size:10,
+                    right:0,
+                    bottom:0,
+                    minLength:40,
+                    spacing:14
+                },
+                on:{
+                    /* 可以监听滚动事件 */
+                    scroll:(e)=>{
+                    },
+                    scrollTop:(e)=>{
+                        console.log('触发顶部事件')
+                        e.done()
+                    }
+                }
+            }
         }
     },
     methods:{
-      initScroller(){
-        //可通过元素的vs-id来进行初始化滚动条（vue、react、angularjs建议使用vs-id进行初始化，可兼容条件渲染）
-        this.scroller = viewScroller.init('#scroller',{
-            alwayShow:true,
-            class:'myscroller',
-            width:500,
-            height:500,
-            theme:'light',    
-            /* 滚动事件，定义事件触发的四个方向距离 */
-            limit:{
-              top:10,
-              bottom:10,
-              left:10,
-              right:10
-            },
-            /* 滚动条样式配置 */
-            scrollBar:{
-                size:10,
-                right:0,
-                bottom:0,
-                minLength:40,
-                spacing:14
-            },
-            on:{
-                /* 可以监听滚动事件 */
-                scroll:(e)=>{
-                },
-                scrollTop:(e)=>{
-                    console.log('触发顶部事件')
-                    e.done()
-                }
-            }
-        })
-      }  
     },
     mounted(){
-        //初始化滚动条
-        this.initScroller()
         /* 滚动方法 */
-        this.scroller.scrollTo({x:0,y:100}, 500)
+        this.$refs.myscroller.scroller.scrollTo({x:0,y:100}, 500)
     }
 }
 ```
 
 ### 浏览器
-IE最低兼容到IE10，兼容各种主流浏览器
+兼容各种主流浏览器
 
 #### 安装
 拉取github项目根目录下dist/index.global.js，dist/index.css到项目中
@@ -168,7 +169,7 @@ IE最低兼容到IE10，兼容各种主流浏览器
 ...
 <body>
 	<div class="page">
-        <div class="content" vs-id="scroller">
+        <div class="content">
 		...
 		</div>
 	</div>
@@ -177,6 +178,18 @@ IE最低兼容到IE10，兼容各种主流浏览器
 
 
 ## API
+#### viewScroller vue的自定义指令: ***v1.2.8+***
+- `v-view-scroller="DirectiveOptions"` 
+``` ts
+export interface DirectiveOptions{
+    selector?:string,
+    options?:ScorllBarOptions
+}
+```
+- 以上是自定义指令选项的类型定义，都不是必填的
+- ***selector***是一个css选择器，可以初始化未渲染出来的组件元素，例如初始化el-table下的表格body
+- ***options***是viewScroller的初始化选项，详情查看下表ScorllBarOptions属性
+
 #### viewScroller 对象属性:
 - `version` 
 - 当前插件的版本  ***v1.2.2+***
@@ -304,18 +317,19 @@ IE最低兼容到IE10，兼容各种主流浏览器
 
 ## 更新记录
 
+#### v1.2.8 更新
+- 1、新增vue的自定义指令v-view-scroller，兼容vue下的使用
+
 #### v1.2.3 更新
-- 1、新增了通过css选择器，作为init方法的第一个参数传入进行初始化（以解决ue、angular、react条件编译下导致节点消失后重新初始化失效的问题）
-- 2、优化vue、angular、react条件编译下的插件的重新初始化表现
+- 1、新增了通过css选择器，作为init方法的第一个参数传入进行初始化
 
 #### v1.2.2 更新
 - 1、新增下拉刷新功能，兼容pc端和移动端
 - 2、新增下拉刷新事件
-- 3、新增了通过添加vs-id节点属性后，作为init方法的第一个参数传入进行初始化（以解决兼容类似vue中v-if的操作导致节点消失后重现初始化失效的问题）
-- 4、viewScroller对象新增version属性，返回插件版本
-- 5、viewScroller初始化后的实例新增target属性和currentTarget属性，target属性返回插件最外层元素，currentTarget属性返回需要滚动初始化的元素
-- 6、viewScroller初始化后的实例新增getScrollerEvent返回当前滚动插件的ScrollerEv对象
-- 7、插件安装后不再需要引入dist/index.css文件，改为内联样式
+- 3、viewScroller对象新增version属性，返回插件版本
+- 4、viewScroller初始化后的实例新增target属性和currentTarget属性，target属性返回插件最外层元素，currentTarget属性返回需要滚动初始化的元素
+- 5、viewScroller初始化后的实例新增getScrollerEvent返回当前滚动插件的ScrollerEv对象
+- 6、插件安装后不再需要引入dist/index.css文件，改为内联样式
 
 #### v1.2.0 更新
 - 1、适配移动端的滚动条拖动
