@@ -34,7 +34,9 @@ const initScroller = (el:Element, binding:any) => {
         }else{
             console.error('没有找到滚动插件初始化元素。')
         }
-      }
+    }else if((el as any).scroller){
+        (el as any).scroller.update()
+    }
 }
 
 export default {
