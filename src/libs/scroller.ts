@@ -414,6 +414,8 @@ export default class ScrollerBar extends Scroller{
             })
             this.#selector['scview'].elm.style['padding-bottom'] = this.#public.getRealPx(this.options.scrollBar.spacing)
         }else{
+            vnode.elm.style.minWidth = '0'
+            vnode.elm.style.width = '0'; 
             this.#selector['scview'].elm.style['padding-bottom'] = '0px'
         }
     }
@@ -441,6 +443,8 @@ export default class ScrollerBar extends Scroller{
             })
             this.#selector['scview'].elm.style['padding-right'] = this.#public.getRealPx(this.options.scrollBar.spacing)
         }else{
+            vnode.elm.style.minHeight = '0'
+            vnode.elm.style.height = '0'; 
             this.#selector['scview'].elm.style['padding-right'] = '0px'
         }
     }

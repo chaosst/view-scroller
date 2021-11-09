@@ -1,13 +1,17 @@
 {
   "name": "view-scroller",
-  "version": "1.2.12",
+  "version": "1.2.13",
   "description": "page scroller plugin",
-  "type": "commonjs",
   "main": "dist/index.main.js",
+  "module": "dist/index.main.js",
   "types": "types/index.d.ts",
   "unpkg": "dist/index.global.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.main.js"
+    }
+  },
   "files": [
-    "index.main.js",
     "dist",
     "types"
   ],
