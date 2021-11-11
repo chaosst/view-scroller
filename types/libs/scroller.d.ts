@@ -81,12 +81,11 @@ export default class ScrollerBar extends Scroller {
      * @param options 初始化滚动条的参数
      */
     scrollerInit(el: Node | string, options: ScorllBarOptionsRequired): any;
-    private checkDomRemove;
-    private observer;
     private getNested;
     private thumbResizeHor;
     private thumbResizeVer;
     private getScrollClass;
+    private appendNodeList;
     private createVnode;
     /**
      * 容器大小发生变化时，更新滚动条位置和大小
