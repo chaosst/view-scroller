@@ -11,7 +11,7 @@ module.exports = (env, argv)=> {
         },   // 打包对入口文件，期望打包对文件入口
         output:{
             filename:'index.[name].js',   // 输出文件名称
-            sourceMapFilename:'index.[name].map.js',   // 输出文件名称
+            // sourceMapFilename:'index.[name].map.js',   // 输出文件名称
             path:path.resolve(__dirname,'dist'),  //获取输出路径
             // library:'viewScroller',   //引入的名字
             /* 根据入口entry设定的环境对应编译后的文件名 */

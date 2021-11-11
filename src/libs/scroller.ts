@@ -95,9 +95,9 @@ export default class ScrollerBar extends Scroller{
 
     public cssSelector:string|null = null
 
-    #DOMNodeRemovedEvent:any = null
+    // #DOMNodeRemovedEvent:any = null
 
-    #mutationObserver:any = null
+    // #mutationObserver:any = null
 
     #public:Public = this.getPublic()
 
@@ -326,61 +326,61 @@ export default class ScrollerBar extends Scroller{
         }
     }
 
-    private checkDomRemove(target:any){
-        if(!this.cssSelector){
-            return ;
-        }
-        this.#DOMNodeRemovedEvent = null
-        document.body.addEventListener('DOMNodeRemoved', this.#DOMNodeRemovedEvent = (e:any)=>{
-            if(e.target.contains(target)){
-                let removedTarget = e.target
-                document.body.removeEventListener('DOMNodeRemoved', this.#DOMNodeRemovedEvent)
-                this.#DOMNodeRemovedEvent = null
-                if(removedTarget.parentNode){
-                    if(!removedTarget.parentNode.DOMNodeRemovedEvent){
-                        this.checkDomRemove(removedTarget.parentNode)
-                    }
-                    this.observer(removedTarget.parentNode)
-                }
-            }
-        })
-    }
+    // private checkDomRemove(target:any){
+    //     if(!this.cssSelector){
+    //         return ;
+    //     }
+    //     this.#DOMNodeRemovedEvent = null
+    //     document.body.addEventListener('DOMNodeRemoved', this.#DOMNodeRemovedEvent = (e:any)=>{
+    //         if(e.target.contains(target)){
+    //             let removedTarget = e.target
+    //             document.body.removeEventListener('DOMNodeRemoved', this.#DOMNodeRemovedEvent)
+    //             this.#DOMNodeRemovedEvent = null
+    //             if(removedTarget.parentNode){
+    //                 if(!removedTarget.parentNode.DOMNodeRemovedEvent){
+    //                     this.checkDomRemove(removedTarget.parentNode)
+    //                 }
+    //                 this.observer(removedTarget.parentNode)
+    //             }
+    //         }
+    //     })
+    // }
 
-    private observer(target:Element){
-        if(!this.cssSelector){
-            return ;
-        }
-        // Options for the observer (which mutations to observe)
-        const config = { attributes: false, childList: true, subtree: true };
+    // private observer(target:Element){
+    //     if(!this.cssSelector){
+    //         return ;
+    //     }
+    //     // Options for the observer (which mutations to observe)
+    //     const config = { attributes: false, childList: true, subtree: true };
 
-        // Callback function to execute when mutations are observed
-        const callback = (mutationsList:any[], observer:any) => {
-            // Use traditional 'for loops' for IE 11
-            // debugger
-            console.log(mutationsList)
-            for(let ind in mutationsList) {
-                const mutation = mutationsList[ind]
-                // if(mutation.pr)
-                if(mutation.type === 'childList' && mutation.addedNodes.length>0) {
-                    for(let i in mutation.addedNodes){
-                        if(mutation.addedNodes[i].querySelector){
-                            let el = mutation.addedNodes[i].querySelector(this.cssSelector)
-                            if(el){
-                                this.#mutationObserver.disconnect()
-                                this.#mutationObserver = null
-                                this.scrollerInit(this.cssSelector as string, this.options)
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        };
-        // Create an observer instance linked to the callback function
-        this.#mutationObserver = new MutationObserver(callback);
-        // Start observing the target node for configured mutations
-        this.#mutationObserver.observe(target, config);
-    }
+    //     // Callback function to execute when mutations are observed
+    //     const callback = (mutationsList:any[], observer:any) => {
+    //         // Use traditional 'for loops' for IE 11
+    //         // debugger
+    //         console.log(mutationsList)
+    //         for(let ind in mutationsList) {
+    //             const mutation = mutationsList[ind]
+    //             // if(mutation.pr)
+    //             if(mutation.type === 'childList' && mutation.addedNodes.length>0) {
+    //                 for(let i in mutation.addedNodes){
+    //                     if(mutation.addedNodes[i].querySelector){
+    //                         let el = mutation.addedNodes[i].querySelector(this.cssSelector)
+    //                         if(el){
+    //                             this.#mutationObserver.disconnect()
+    //                             this.#mutationObserver = null
+    //                             this.scrollerInit(this.cssSelector as string, this.options)
+    //                             break;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     };
+    //     // Create an observer instance linked to the callback function
+    //     this.#mutationObserver = new MutationObserver(callback);
+    //     // Start observing the target node for configured mutations
+    //     this.#mutationObserver.observe(target, config);
+    // }
 
     private getNested(el:HTMLElement){
         let n:number = 0
@@ -414,6 +414,8 @@ export default class ScrollerBar extends Scroller{
             })
             this.#selector['scview'].elm.style['padding-bottom'] = this.#public.getRealPx(this.options.scrollBar.spacing)
         }else{
+            vnode.elm.style.minWidth = '0'
+            vnode.elm.style.width = '0'; 
             this.#selector['scview'].elm.style['padding-bottom'] = '0px'
         }
     }
@@ -441,6 +443,8 @@ export default class ScrollerBar extends Scroller{
             })
             this.#selector['scview'].elm.style['padding-right'] = this.#public.getRealPx(this.options.scrollBar.spacing)
         }else{
+            vnode.elm.style.minHeight = '0'
+            vnode.elm.style.height = '0'; 
             this.#selector['scview'].elm.style['padding-right'] = '0px'
         }
     }
@@ -846,12 +850,12 @@ export default class ScrollerBar extends Scroller{
     }
 
     public destroy(){
-        if(this.#DOMNodeRemovedEvent){
-            document.body.removeEventListener('DOMNodeRemoved', this.#DOMNodeRemovedEvent)
-        }
-        if(this.#mutationObserver){
-            this.#mutationObserver.disconnect()
-        }
+        // if(this.#DOMNodeRemovedEvent){
+        //     document.body.removeEventListener('DOMNodeRemoved', this.#DOMNodeRemovedEvent)
+        // }
+        // if(this.#mutationObserver){
+        //     this.#mutationObserver.disconnect()
+        // }
         if(this.target && this.currentTarget && this.target.parentElement){
             this.target.parentElement.insertBefore(this.currentTarget, this.target)
             this.target.remove()

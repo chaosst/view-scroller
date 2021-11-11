@@ -25,16 +25,22 @@ export interface DirectiveOptions{
 const initScroller = (el:Element, binding:any) => {
     let initEl = el
     let opt:Record<string, any> = binding.value as DirectiveOptions?binding.value.options:{};
-    if(binding.value as DirectiveOptions && binding.value.selector as string){
+    if((el as any)._viewScrollerEl && el.contains((el as any)._viewScrollerEl)){
+        initEl = (el as any)._viewScrollerEl
+    } else if(binding.value as DirectiveOptions && binding.value.selector as string){
+        (el as any)._viewScrollerEl = null;
         initEl = el.querySelector(binding.value.selector)
     }
-    if(initEl.parentElement && !Array.from(initEl.parentElement.classList).includes('__view-scroller-view')){
+    if(!(el as any)._viewScrollerEl){
         if(initEl){
-            (el as any).scroller = viewScroller.init(initEl,opt)
+            (initEl as any).scroller = viewScroller.init(initEl,opt);
+            (el as any)._viewScrollerEl = initEl;
         }else{
             console.error('没有找到滚动插件初始化元素。')
         }
-      }
+    }else if((initEl as any).scroller){
+        (initEl as any).scroller.update()
+    }
 }
 
 export default {
@@ -49,7 +55,10 @@ export default {
                     initScroller(el,binding)
                 },
                 [apis.UNMOUNTED](el:HTMLElement) {
-                    (el as any).scroller.destroy()
+                    debugger
+                    if((el as any)._viewScrollerEl){
+                        (el as any)._viewScrollerEl.scroller.destroy()
+                    }
                 }
               })
         }

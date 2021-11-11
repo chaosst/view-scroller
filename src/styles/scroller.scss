@@ -31,9 +31,12 @@
             padding-bottom:14px;
             transition-timing-function: 'linear';
             transition-duration:'10000ms';
-            display: inline-block;
+            display: block;
             > *{
-                display: inline-block;
+                display: block;
+                height:auto;
+                width:auto;
+                overflow: initial;
             }
         }
         /* firefox */

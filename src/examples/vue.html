@@ -53,18 +53,20 @@
                 },
                 methods:{
                     toggleScroller(){
-                        if(this.$refs.scroller && this.$refs.scroller.scroller){
-                            if(this.$refs.scroller.scroller.state){
-                                this.$refs.scroller.scroller.destroy()
-                            }else if(!this.$refs.scroller.scroller.state){
-                                this.$refs.scroller.scroller = window.viewScroller.init(this.$refs.content, this.scrollerOption)                     
+                        if(this.$refs.scroller && this.$refs.scroller._viewScrollerEl && this.$refs.scroller._viewScrollerEl.scroller){
+                            if(this.$refs.scroller._viewScrollerEl.scroller.state){
+                                this.$refs.scroller._viewScrollerEl.scroller.destroy()
+                            }else if(!this.$refs.scroller._viewScrollerEl.scroller.state){
+                                this.$refs.scroller._viewScrollerEl.scroller = window.viewScroller.init(this.$refs.content, this.scrollerOption)                     
                             }
                         }
                     }
                 },
                 mounted(){
                     /* 滚动方法 */
-                    this.$refs.scroller.scroller.scrollTo({x:0,y:100}, 500)
+                    if(this.$refs.scroller && this.$refs.scroller._viewScrollerEl){
+                        this.$refs.scroller._viewScrollerEl.scroller.scrollTo({x:0,y:100}, 500)
+                    }
                 }
             })
         }

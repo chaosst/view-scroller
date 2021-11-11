@@ -81,8 +81,6 @@ export default class ScrollerBar extends Scroller {
      * @param options 初始化滚动条的参数
      */
     scrollerInit(el: Node | string, options: ScorllBarOptionsRequired): any;
-    private checkDomRemove;
-    private observer;
     private getNested;
     private thumbResizeHor;
     private thumbResizeVer;
