@@ -109,7 +109,7 @@ export default {
     },
     mounted(){
         /* 滚动方法 */
-        this.$refs.myscroller.scroller.scrollTo({x:0,y:100}, 500)
+        this.$refs.myscroller._viewScrollerEl.scroller.scrollTo({x:0,y:100}, 500)
     }
 }
 ```
