@@ -286,7 +286,7 @@ export default class ScrollerBar extends Scroller{
         this.dragInit();
         
         let div = this.createVnode(container, options)
-        
+        container.appendChild(box)
         this.#patch(box, div)
         this.target = div.elm
         this.currentTarget = container
@@ -456,10 +456,19 @@ export default class ScrollerBar extends Scroller{
             return '.__view-scrollbar__wrap--hidden-default'
         }
     }
+
+    private appendNodeList(el:HTMLElement,nodeList:NodeList){
+        Array.from(nodeList).forEach(item=>{
+            const root = el.closest('.__view-scroller')
+            if(root && !root.isSameNode(item)){
+                el.appendChild(item)
+            }
+        })
+    }
     
 
     private createVnode(el:Node, options:ScorllBarOptionsRequired){
-        const realEl = el
+        const realElNodeList = el.childNodes
         const vn = toVNode(el)
         // document.body.appendChild(realEl)
         // let childs = el.childNodes
@@ -671,7 +680,9 @@ export default class ScrollerBar extends Scroller{
                         //     this.#selector['scview'].elm.appendChild(item)
                         // })
                         // cbox.remove()
-                        this.#selector['scview'].elm.appendChild(realEl)
+                        // this.#selector['scview'].elm.appendChild(realEl)
+                        debugger
+                        this.appendNodeList(this.#selector['scview'].elm, realElNodeList)
                     },
                     update:()=>{
                         // let childs = cbox.childNodes
@@ -679,7 +690,8 @@ export default class ScrollerBar extends Scroller{
                         //     this.#selector['scview'].elm.appendChild(item)
                         // })
                         // cbox.remove()
-                        this.#selector['scview'].elm.appendChild(realEl)
+                        // this.#selector['scview'].elm.appendChild(realEl)
+                        this.appendNodeList(this.#selector['scview'].elm, realElNodeList)
                     }
                 }
             })]),

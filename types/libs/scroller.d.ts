@@ -85,6 +85,7 @@ export default class ScrollerBar extends Scroller {
     private thumbResizeHor;
     private thumbResizeVer;
     private getScrollClass;
+    private appendNodeList;
     private createVnode;
     /**
      * 容器大小发生变化时，更新滚动条位置和大小
