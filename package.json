@@ -1,6 +1,6 @@
 {
   "name": "view-scroller",
-  "version": "1.2.16",
+  "version": "1.2.17",
   "description": "page scroller plugin",
   "main": "dist/index.main.js",
   "module": "dist/index.main.js",

@@ -31,13 +31,7 @@
             padding-bottom:14px;
             transition-timing-function: 'linear';
             transition-duration:'10000ms';
-            display: block;
-            > *{
-                display: block;
-                height:auto;
-                width:auto;
-                overflow: initial;
-            }
+            display: inline-block;
         }
         /* firefox */
         &.__view-scrollbar__wrap--hidden-default{

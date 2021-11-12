@@ -233,17 +233,17 @@ export default class ScrollerBar extends Scroller{
         })
         document.addEventListener(this.getEvent('mousemove'),this.#mousemoveEv = (event:any)=>{
             const scBox:any = this.#selector['scbox']
-            const scView:any = this.#selector['scview']
+            const scView:any = this.#selector['scbox'].elm.getElementsByClassName('__view-scroller-view')[0]
             let { pageY, pageX }:any = this.options.mobile?event.targetTouches[0]:event
-            if(this.#isDraging){
+            if(this.#isDraging && scView){
                 this.#selector['scver'].elm.style.opacity = 1
                 this.#selector['schor'].elm.style.opacity = 1
                 this.#selector['schor'].elm.style.visibility = 'visible'
                 this.#selector['scver'].elm.style.visibility = 'visible'
                 let disY:number = this.#startPos.Y - pageY
-                scBox.elm.scrollTop = this.#startPos.scrollTop - disY/scBox.elm.offsetHeight*scView.elm.offsetHeight
+                scBox.elm.scrollTop = this.#startPos.scrollTop - disY/scBox.elm.offsetHeight*scView.offsetHeight
                 let disX:number = this.#startPos.X - pageX
-                scBox.elm.scrollLeft = this.#startPos.scrollLeft - disX/scBox.elm.offsetWidth*scView.elm.offsetWidth
+                scBox.elm.scrollLeft = this.#startPos.scrollLeft - disX/scBox.elm.offsetWidth*scView.offsetWidth
             }
         })
     }
@@ -311,13 +311,13 @@ export default class ScrollerBar extends Scroller{
                 })
             })
             myObserver.observe(div.elm)
-            myObserver.observe(this.#selector['scview'].elm)
+            myObserver.observe(container)
         }else{
             if(typeof div.elm.attachEvent != 'undefined'){
                 div.elm.attachEvent('onresize', ()=>{
                     this.update()
                 })
-                this.#selector['scview'].elm.attachEvent('onresize', ()=>{
+                (container as any).attachEvent('onresize', ()=>{
                     this.update()
                 })
             }else{
@@ -391,10 +391,13 @@ export default class ScrollerBar extends Scroller{
     }
 
     private thumbResizeHor = (vnode:any)=>{
+        if(!this.currentTarget){
+            return ;
+        }
         let zIndex = 1
         vnode.elm.parentNode.style.zIndex = zIndex + this.getNested(vnode.elm.parentNode)
         let max:number = this.#selector['scbox'].elm.offsetWidth
-        let scale:number = max/this.#selector['scview'].elm.offsetWidth
+        let scale:number = max/(this.currentTarget as any).offsetWidth
         if(scale<1){
             let minLength:number = this.options.scrollBar.minLength
             if(minLength>=max || minLength<this.#public.SCROLL_MINLENGTH){
@@ -406,24 +409,27 @@ export default class ScrollerBar extends Scroller{
                 scale = minLength/(max-minLength)
             }
             const vm = this;
-            vnode.elm.style.transform = `translateX(${this.#selector['scbox'].elm.scrollLeft/(scale*vm.#selector['scview'].elm.offsetWidth)*100}%)`
+            vnode.elm.style.transform = `translateX(${this.#selector['scbox'].elm.scrollLeft/(scale*(vm.currentTarget as any).offsetWidth)*100}%)`
             Object.defineProperty(this.#mainEv, 'scrollLeft', {
                 set(newValue) {
-                    vnode.elm.style.transform = `translateX(${newValue/(scale*vm.#selector['scview'].elm.offsetWidth)*100}%)`
+                    vnode.elm.style.transform = `translateX(${newValue/(scale*(vm.currentTarget as any).offsetWidth)*100}%)`
                 }
-            })
-            this.#selector['scview'].elm.style['padding-bottom'] = this.#public.getRealPx(this.options.scrollBar.spacing)
+            });
+            (this.currentTarget as any).style['padding-bottom'] = this.#public.getRealPx(this.options.scrollBar.spacing)
         }else{
             vnode.elm.style.minWidth = '0'
             vnode.elm.style.width = '0'; 
-            this.#selector['scview'].elm.style['padding-bottom'] = '0px'
+            (this.currentTarget as any).style['padding-bottom'] = '0px'
         }
     }
     private thumbResizeVer = (vnode:any)=>{
+        if(!this.currentTarget){
+            return ;
+        }
         let zIndex = 1
         vnode.elm.parentNode.style.zIndex = zIndex + this.getNested(vnode.elm.parentNode)
         let max:number = this.#selector['scbox'].elm.offsetHeight
-        let scale:number = max/this.#selector['scview'].elm.offsetHeight
+        let scale:number = max/(this.currentTarget as any).offsetHeight
         if(scale<1){
             let minLength:number = this.options.scrollBar.minLength
             if(minLength>=max || minLength<this.#public.SCROLL_MINLENGTH){
@@ -435,17 +441,17 @@ export default class ScrollerBar extends Scroller{
                 scale = minLength/(max-minLength)
             }
             const vm = this;
-            vnode.elm.style.transform = `translateY(${this.#selector['scbox'].elm.scrollTop/(scale*vm.#selector['scview'].elm.offsetHeight)*100}%)`
+            vnode.elm.style.transform = `translateY(${this.#selector['scbox'].elm.scrollTop/(scale*(vm.currentTarget as any).offsetHeight)*100}%)`
             Object.defineProperty(this.#mainEv, 'scrollTop', {
                 set(newValue) {
-                    vnode.elm.style.transform = `translateY(${newValue/(scale*vm.#selector['scview'].elm.offsetHeight)*100}%)`
+                    vnode.elm.style.transform = `translateY(${newValue/(scale*(vm.currentTarget as any).offsetHeight)*100}%)`
                 }
-            })
-            this.#selector['scview'].elm.style['padding-right'] = this.#public.getRealPx(this.options.scrollBar.spacing)
+            });
+            (this.currentTarget as any).style['padding-right'] = this.#public.getRealPx(this.options.scrollBar.spacing)
         }else{
             vnode.elm.style.minHeight = '0'
             vnode.elm.style.height = '0'; 
-            this.#selector['scview'].elm.style['padding-right'] = '0px'
+            (this.currentTarget as any).style['padding-right'] = '0px'
         }
     }
 
@@ -572,11 +578,16 @@ export default class ScrollerBar extends Scroller{
                         this.bus.off('scrollLeft')
                         this.bus.off('scrollRight')
                     },
+                    update(){
+                        debugger
+                    },
                     insert:(vnode:any)=>{
-                        const { elm } = vnode
+                        const { elm } = vnode;
+                        (realEl as any).classList.add('__view-scroller-view')
+                        this.#selector['scbox'].elm.appendChild(realEl)
                         let prevOffsetHeight:number = -1, prevOffsetWidth:number = -1
                         const checkRightBottom = ()=>{
-                            const disY = this.#selector['scview'].elm.offsetHeight - elm.offsetHeight
+                            const disY = (realEl as any).offsetHeight - elm.offsetHeight
                             if(disY <= options.limit.bottom && disY != prevOffsetHeight){
                                 if(!this.#onceEvents.scrollBottom){
                                     prevOffsetHeight = disY
@@ -585,7 +596,7 @@ export default class ScrollerBar extends Scroller{
                             }else{
                                 this.#onceEvents.scrollBottom = 0
                             }
-                            const disX = this.#selector['scview'].elm.offsetWidth - elm.offsetWidth
+                            const disX = (realEl as any).offsetWidth - elm.offsetWidth
                             if(disX <= options.limit.right && disX != prevOffsetWidth){
                                 if(!this.#onceEvents.scrollRight){
                                     prevOffsetWidth = disX
@@ -597,6 +608,7 @@ export default class ScrollerBar extends Scroller{
                         }
                         /* 初始化时检测一次右边和底部的滚动事件 */
                         checkRightBottom()
+                        
                     }
                 },
                 on: {
@@ -618,7 +630,7 @@ export default class ScrollerBar extends Scroller{
                         this.#mainEv.scrollLeft = scrollLeft
                         this.#mainEv.target = target
                         this.bus.emit('scroll', {...this.#mainEv, scrollTop, scrollLeft})
-                        if(this.#selector['scview'].elm.offsetHeight - (scrollTop + this.#selector['scbox'].elm.offsetHeight) <= options.limit.bottom && this.#hasEvent.scrollBottom){
+                        if((realEl as any).offsetHeight - (scrollTop + this.#selector['scbox'].elm.offsetHeight) <= options.limit.bottom && this.#hasEvent.scrollBottom){
                             if(!this.#onceEvents.scrollBottom){
                                 this.#onceEvents.scrollBottom = 1
                                 this.bus.emit('scrollBottom', {...this.#mainEv, done:()=>{this.#onceEvents.scrollBottom = 0}})
@@ -630,7 +642,7 @@ export default class ScrollerBar extends Scroller{
                                 this.bus.emit('scrollTop', {...this.#mainEv, done:()=>{this.#onceEvents.scrollTop = 0}})
                             }
                         }
-                        if(this.#selector['scview'].elm.offsetWidth - (scrollLeft + this.#selector['scbox'].elm.offsetWidth) <= options.limit.right && this.#hasEvent.scrollRight){
+                        if((realEl as any).offsetWidth - (scrollLeft + this.#selector['scbox'].elm.offsetWidth) <= options.limit.right && this.#hasEvent.scrollRight){
                             if(!this.#onceEvents.scrollRight){
                                 this.#onceEvents.scrollRight = 1
                                 this.bus.emit('scrollRight', {...this.#mainEv, done:()=>{this.#onceEvents.scrollRight = 0}})
@@ -660,29 +672,31 @@ export default class ScrollerBar extends Scroller{
                         }
                     },
                 }
-            },[...refreshDiv, h('div.__view-scroller-view',{
-                dataset:{
-                    ref:'scview'
-                },
-                hook:{
-                    insert:()=>{
-                        // let childs = cbox.childNodes
-                        // childs.forEach((item:Node)=>{
-                        //     this.#selector['scview'].elm.appendChild(item)
-                        // })
-                        // cbox.remove()
-                        this.#selector['scview'].elm.appendChild(realEl)
-                    },
-                    update:()=>{
-                        // let childs = cbox.childNodes
-                        // childs.forEach((item:Node)=>{
-                        //     this.#selector['scview'].elm.appendChild(item)
-                        // })
-                        // cbox.remove()
-                        this.#selector['scview'].elm.appendChild(realEl)
-                    }
-                }
-            })]),
+            },[...refreshDiv
+                // , h('div.__view-scroller-view',{
+                // dataset:{
+                //     ref:'scview'
+                // },
+                // hook:{
+                //     insert:()=>{
+                //         // let childs = cbox.childNodes
+                //         // childs.forEach((item:Node)=>{
+                //         //     this.#selector['scview'].elm.appendChild(item)
+                //         // })
+                //         // cbox.remove()
+                //         this.#selector['scview'].elm.appendChild(realEl)
+                //     },
+                //     update:()=>{
+                //         // let childs = cbox.childNodes
+                //         // childs.forEach((item:Node)=>{
+                //         //     this.#selector['scview'].elm.appendChild(item)
+                //         // })
+                //         // cbox.remove()
+                //         this.#selector['scview'].elm.appendChild(realEl)
+                //     }
+                // }
+                // })
+            ]),
             h('div.__view-scroller-bar is-horizontal',{
                 dataset:{
                     ref:'schor'
@@ -859,6 +873,7 @@ export default class ScrollerBar extends Scroller{
         if(this.target && this.currentTarget && this.target.parentElement){
             this.target.parentElement.insertBefore(this.currentTarget, this.target)
             this.target.remove()
+            this.currentTarget.classList.remove('__view-scroller-view')
             this.target = null
             this.currentTarget = null
             this.state = this.#public.state.UNINIT

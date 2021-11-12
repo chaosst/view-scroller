@@ -35,8 +35,6 @@ const initScroller = (el:Element, binding:any) => {
         if(initEl){
             (initEl as any).scroller = viewScroller.init(initEl,opt);
             (el as any)._viewScrollerEl = initEl;
-        }else{
-            console.error('没有找到滚动插件初始化元素。')
         }
     }else if((initEl as any).scroller){
         (initEl as any).scroller.update()

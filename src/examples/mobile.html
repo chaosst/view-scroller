@@ -64,7 +64,7 @@
                             var img = document.createElement('img')
                             num = num==4?5:(num+1)%5
                             img.src = 'images/'+num+'.jpeg'
-                            el.appendChild(img)
+                            $s2.currentTarget.appendChild(img)
                             e.done()
                             hideLoading()
                         }, 500)

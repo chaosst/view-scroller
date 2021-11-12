@@ -33,7 +33,7 @@ html,body{
     opacity: .8;
 }
 .page .page-content{
-    width:100%;
+    width:100% !important;
 }
 
 .page-scroller{
